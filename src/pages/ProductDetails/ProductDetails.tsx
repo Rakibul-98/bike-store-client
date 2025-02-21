@@ -1,44 +1,56 @@
-import { useParams } from "react-router-dom";
-import { useGetProductByIdQuery } from "../../redux/features/products/productsApi";
+import { useParams } from 'react-router-dom';
+import { useGetAllProductsQuery, useGetProductByIdQuery } from '../../redux/features/products/productsApi';
+import DetailsCard from './DetailsCard';
+import { TProduct } from '../Products/Products';
+import ProductCard from '../Products/ProductCard';
+import { useEffect, useState } from 'react';
 
 export default function ProductDetails() {
-  const { id } = useParams();
+    const { productId } = useParams();
+    const { data: product, error: productError, isLoading: isProductLoading } = useGetProductByIdQuery(productId);
+    const { data: allProducts, error: allProductsError, isLoading: isAllProductsLoading } = useGetAllProductsQuery(undefined);
+    const [visibleCount, setVisibleCount] = useState(4);
 
-  // Fetch product data
-  const { data, isLoading, error } = useGetProductByIdQuery(id!);
+    useEffect(() => {
+        const updateVisibleCount = () => {
+          if (window.innerWidth < 768) {
+            setVisibleCount(4); // Small screens
+          } else if (window.innerWidth < 1024) {
+            setVisibleCount(3); // Medium screens
+          } else {
+            setVisibleCount(4); // Large screens
+          }
+        };
+    
+        updateVisibleCount(); // Initial call
+        window.addEventListener("resize", updateVisibleCount);
+        return () => window.removeEventListener("resize", updateVisibleCount);
+      }, []);
+    
 
-  // Ensure data exists before accessing data.data
-  if (isLoading) return <p>Loading product...</p>;
-  if (error) return <p>Failed to load product.</p>;
-  if (!data || !data.data) return <p>Product not found.</p>;
+    if (isProductLoading || isAllProductsLoading) return <div>Loading...</div>;
+    if (productError || allProductsError) return <div>Error loading data</div>;
 
-  // Extract product properties
-  const { name, category, description, brand, inStock, price } = data.data;
+    const allProductsData = allProducts?.data?.result;
 
-  return (
-    <div className="container mx-auto px-4 py-6">
-      <h1 className="text-2xl font-semibold">Product Details</h1>
-      <div className="bg-white p-6 rounded-lg shadow-md grid grid-cols-2">
-      <div>
-        <img
-          className="w-full object-cover object-center"
-          src={`/api/products/image/${id}`}
-          alt={name}
-        />
-      </div>
-      <div className="">
-        <h2 className="text-xl font-bold flex justify-between">{name} <span className=" badge badge-neutral"><small>{inStock ? "In Stock" : "Out of Stock"}</small></span></h2>
-        <p className="text-gray-600">{description}</p>
-        <p className="text-gray-800"><strong>Brand:</strong> {brand}</p>
-        <p className="text-gray-800"><strong>Category:</strong> {category}</p>
-        <p className="text-green-600 font-bold"><strong>Price:</strong> ${price}</p>
-        <div className="flex justify-end space-x-5">
-          <button className="px-3 border-2">Add to Cart</button>
-          <button className="px-3 border-2">Buy Now</button>
+    // Function to get 4 random suggested products
+    const getRandomSuggestedProducts = (products:TProduct[], currentProductId: string | undefined) => {
+        if (!products) return [];
+        const filteredProducts = products.filter((p) => p._id !== currentProductId);
+        return filteredProducts.sort(() => 0.5 - Math.random()).slice(0, visibleCount);
+    };
+
+    const suggestedProducts = getRandomSuggestedProducts(allProductsData, productId);
+
+    return (
+        <div className='my-10'>
+            <DetailsCard productData = { product?.data } />
+            <h2 className='font-mono font-semibold text-2xl mt-10 mb-3'>Products You may Like</h2>
+            <div className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4'>
+                {suggestedProducts.map((p) => (
+                    <ProductCard key={p._id} product={p} />
+                ))}
+            </div>
         </div>
-        </div>
-        
-      </div>
-    </div>
-  );
+    );
 }

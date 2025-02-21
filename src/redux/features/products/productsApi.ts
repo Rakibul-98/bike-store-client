@@ -3,10 +3,20 @@ import { baseApi } from "../../api/baseApi";
 const productsApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     getAllProducts: builder.query({
-      query: () => ({
-        url: "/products",
-        method: "GET",
-      }),
+      query: (args) => {
+        const params = new URLSearchParams();
+        if (args) {
+          args.forEach((item) => {
+            params.append(item.name, item.value);
+          });
+        }
+        return {
+          url: "/products",
+          method: "GET",
+          params: params,
+        };
+      },
+      providesTags: ["products"],
     }),
     getProductById: builder.query({
       query: (id: string) => ({
@@ -14,7 +24,36 @@ const productsApi = baseApi.injectEndpoints({
         method: "GET",
       }),
     }),
+    createProduct: builder.mutation({
+      query: (productData) => ({
+        url: "/products",
+        method: "POST",
+        body: productData,
+      }),
+      invalidatesTags: ["products"],
+    }),
+    updateProduct: builder.mutation({
+      query: (productData) => ({
+        url: `/products/${productData._id}`,
+        method: "PATCH",
+        body: productData,
+      }),
+      invalidatesTags: ["products"],
+    }),
+    deleteProduct: builder.mutation({
+      query: (id: string) => ({
+        url: `/products/${id}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["products"],
+    }),
   }),
 });
 
-export const { useGetAllProductsQuery, useGetProductByIdQuery } = productsApi;
+export const {
+  useGetAllProductsQuery,
+  useGetProductByIdQuery,
+  useCreateProductMutation,
+  useUpdateProductMutation,
+  useDeleteProductMutation,
+} = productsApi;

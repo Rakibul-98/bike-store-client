@@ -24,6 +24,7 @@ const baseQueryWithRefreshToken: BaseQueryFn = async (
   extraOptions
 ) => {
   let result = await baseQuery(args, api, extraOptions);
+  console.log(result);
 
   if (result?.error?.status === 401) {
     // refresh token
@@ -38,7 +39,7 @@ const baseQueryWithRefreshToken: BaseQueryFn = async (
       api.dispatch(
         setUser({
           user,
-          token: data.data.token,
+          token: data?.data?.token,
         })
       );
       result = await baseQuery(args, api, extraOptions);
@@ -52,5 +53,6 @@ const baseQueryWithRefreshToken: BaseQueryFn = async (
 export const baseApi = createApi({
   reducerPath: "baseApi",
   baseQuery: baseQueryWithRefreshToken,
+  tagTypes: ["products", "product", "users", "orders"],
   endpoints: () => ({}),
 });

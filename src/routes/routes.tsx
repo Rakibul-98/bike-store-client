@@ -10,6 +10,9 @@ import Register from "../pages/Register/Register";
 import ProductDetails from "../pages/ProductDetails/ProductDetails";
 import Cart from "../pages/Cart/Cart";
 import CheckOut from "../pages/CheckOut/CheckOut";
+import AdminDashboard from "../pages/Dashboard/Admin/AdminDashboard";
+import AllProducts from "../pages/Dashboard/Admin/components/AllProducts/AllProducts";
+
 
 const router = createBrowserRouter([
     {
@@ -29,7 +32,7 @@ const router = createBrowserRouter([
                 element: <Products/>
             },
             {
-                path: "productDetails/:id",
+                path: "productDetails/:productId",
                 element: <ProductDetails/>
             },
             {
@@ -56,6 +59,21 @@ const router = createBrowserRouter([
                 path: "register",
                 element: <Register/>
             },
+            {
+                path: "adminDashboard",
+                element: <AdminDashboard />,
+                children: [
+                    {
+                        index: true,
+                        element: <AllProducts/>
+                    },
+                    {
+                        path: "allProducts",
+                        element: <AllProducts/>
+                    },
+                ]
+            },
+            
 
             {
                 path: "*",
