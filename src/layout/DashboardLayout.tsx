@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { Outlet } from "react-router-dom";
-import SideBar from "../pages/Dashboard/Admin/components/SideBar";
+import SideBar from "../pages/Dashboard/shared/SideBar";
 
-export default function AdminDashboardLayout() {
+export default function DashboardLayout() {
   const [isOpen, setIsOpen] = useState(window.innerWidth > 768);
 
   return (

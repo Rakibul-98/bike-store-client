@@ -23,28 +23,29 @@ const usersApi = baseApi.injectEndpoints({
         url: `/users/${email}`,
         method: "GET",
       }),
+      providesTags: ["users"],
     }),
-    // updateProduct: builder.mutation({
-    //   query: (productData) => ({
-    //     url: `/products/${productData._id}`,
-    //     method: "PATCH",
-    //     body: productData,
-    //   }),
-    //   invalidatesTags: ["products"],
-    // }),
-    // deleteProduct: builder.mutation({
-    //   query: (id: string) => ({
-    //     url: `/products/${id}`,
-    //     method: "DELETE",
-    //   }),
-    //   invalidatesTags: ["products"],
-    // }),
+    blockUser: builder.mutation({
+      query: (userId) => ({
+        url: `/admin/users/${userId}/block`,
+        method: "PATCH",
+      }),
+      invalidatesTags: ["users"],
+    }),
+    updateUser: builder.mutation({
+      query: ({ userId, data }) => ({
+        url: `/users/${userId}`,
+        method: "PATCH",
+        body: data,
+      }),
+      invalidatesTags: ["users"],
+    }),
   }),
 });
 
 export const {
   useGetAllUsersQuery,
   useGetUserByEmailQuery,
-  // useUpdateProductMutation,
-  // useDeleteProductMutation,
+  useBlockUserMutation,
+  useUpdateUserMutation,
 } = usersApi;

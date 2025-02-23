@@ -1,16 +1,83 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-const loadCartFromLocalStorage = () => {
-  const cart = localStorage.getItem("cart");
-  return cart ? JSON.parse(cart) : { items: [], coupon: null, discount: 0 };
+interface CartItem {
+  _id: string;
+  cart_quantity: number;
+  available_quantity: number;
+  price: number;
+  [key: string]: any;
+}
+
+interface CartState {
+  items: CartItem[];
+  totalAmount: number;
+  totalItems: number;
+  shippingCost: number;
+  tax: number;
+  discount: number;
+  grandTotal: number;
+  appliedCoupon: string | null;
+  validCoupons: Record<string, number>;
+}
+
+const loadCartFromLocalStorage = (): Partial<CartState> => {
+  try {
+    const saved = localStorage.getItem("cart");
+    if (!saved) return { items: [] };
+
+    const parsed = JSON.parse(saved);
+
+    const validItems = Array.isArray(parsed?.items)
+      ? parsed.items.filter(
+          (item: any) =>
+            item?._id &&
+            item?.cart_quantity &&
+            item?.available_quantity &&
+            item?.price
+        )
+      : [];
+
+    return {
+      items: validItems,
+      appliedCoupon: parsed.appliedCoupon || null,
+      discount: Number(parsed.discount) || 0,
+    };
+  } catch (error) {
+    console.error("Failed to load cart:", error);
+    return { items: [] };
+  }
 };
 
-// Save cart to local storage
-const saveCartToLocalStorage = (cart) => {
-  localStorage.setItem("cart", JSON.stringify(cart));
+const initialCartData = loadCartFromLocalStorage();
+
+const initialState: CartState = {
+  items: initialCartData.items || [],
+  totalAmount: 0,
+  totalItems: 0,
+  shippingCost: 0,
+  tax: 0,
+  discount: initialCartData.discount || 0,
+  grandTotal: 0,
+  appliedCoupon: initialCartData.appliedCoupon || null,
+  validCoupons: {
+    SAVE20: 20,
+    FREEDEL: 500,
+  },
 };
 
-// Function to calculate totals
+const saveCartToLocalStorage = (state: CartState) => {
+  try {
+    const toSave = {
+      items: state.items,
+      appliedCoupon: state.appliedCoupon,
+      discount: state.discount,
+    };
+    localStorage.setItem("cart", JSON.stringify(toSave));
+  } catch (error) {
+    console.error("Failed to save cart:", error);
+  }
+};
+
 const calculateTotals = (state) => {
   state.totalAmount = state.items.reduce(
     (total, item) => total + item.price * item.cart_quantity,
@@ -49,32 +116,20 @@ const calculateTotals = (state) => {
   );
 };
 
-const initialState = {
-  items: loadCartFromLocalStorage(),
-  totalAmount: 0,
-  totalItems: 0,
-  shippingCost: 0,
-  tax: 0,
-  discount: 0,
-  grandTotal: 0,
-  appliedCoupon: null,
-  validCoupons: {
-    SAVE20: 20,
-    FREEDEL: 500,
-  },
-};
-
-// Redux Slice
 const cartSlice = createSlice({
   name: "cart",
   initialState,
   reducers: {
     addToCart: (state, action) => {
+      if (!Array.isArray(state.items)) state.items = [];
+
       const product = action.payload;
       const existingItem = state.items.find((item) => item._id === product._id);
 
       if (existingItem) {
-        existingItem.cart_quantity += 1;
+        if (existingItem.cart_quantity < existingItem.available_quantity) {
+          existingItem.cart_quantity += 1;
+        }
       } else {
         state.items.push({ ...product, cart_quantity: 1 });
       }

@@ -81,7 +81,9 @@ export default function FilterDropdown({ selectedCategories, setSelectedCategori
             )}
           </div>
 
-          <div className="mt-3">
+          {
+            brands && (
+              <div className="mt-3">
             <button
               className={`w-full text-left py-2 px-3 font-semibold flex items-center justify-between ${activeSection === "brand" ? "bg-gray-200" : "bg-white"}`}
               onClick={() => setActiveSection("brand")}
@@ -105,6 +107,8 @@ export default function FilterDropdown({ selectedCategories, setSelectedCategori
               </ul>
             )}
           </div>
+            )
+          }
         </div>
       )}
     </div>

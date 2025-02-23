@@ -16,13 +16,14 @@ const productsApi = baseApi.injectEndpoints({
           params: params,
         };
       },
-      providesTags: ["products"],
+      providesTags: ["products", "orders"],
     }),
     getProductById: builder.query({
       query: (id: string) => ({
         url: `/products/${id}`,
         method: "GET",
       }),
+      providesTags: ["products", "orders"],
     }),
     createProduct: builder.mutation({
       query: (productData) => ({

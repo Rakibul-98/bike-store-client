@@ -3,9 +3,15 @@ import { Link } from "react-router-dom";
 import { TProduct } from "../Products/Products";
 import OrderSummery from "./OrderSummery";
 import CartItem from "./CartItem";
+import emptyCart from "../../assets/images/empty-cart.svg";;
 
 export default function Cart() {
-  const cartItems = useSelector((state: any) => state.cart.items);
+  // const cartItems = useSelector((state: any) => state.cart.items);
+
+  const cartItems = useSelector((state: any) => {
+    const items = state?.cart?.items;
+    return Array.isArray(items) ? items : [];
+  });
 
   return (
     <div className="my-5">
@@ -32,14 +38,17 @@ export default function Cart() {
 
       {/* Empty Cart Message */}
       {cartItems.length === 0 && (
-        <div className="cart-summary h-[500px] flex flex-col justify-center p-5 rounded shadow mt-5">
-          <h2 className="text-center text-lg font-bold">Your cart is empty</h2>
+        <div className="cart-summary flex flex-col justify-center items-center p-5 rounded shadow mt-5">
+          <img className="max-w-md" src={emptyCart} alt="" />
+          <div>
+          <h2 className="text-center text-lg font-bold capitalize">Your cart is empty</h2>
           <Link 
             className="flex justify-center text-blue-500 hover:underline mt-2" 
             to="/products"
           >
-            Back to products
+            Add Products
           </Link>
+          </div>
         </div>
       )}
     </div>

@@ -4,6 +4,7 @@ import FilterDropdown from "../Dashboard/Admin/components/AllProducts/FilterDrop
 import ProductCard from "./ProductCard";
 import { useForm } from "react-hook-form";
 import { BiArrowToBottom, BiArrowToTop } from "react-icons/bi";
+import noProductImg from '../../assets/images/no-product.svg';
 
 export type TProduct = {
   _id: string;
@@ -28,37 +29,35 @@ export default function Products() {
   const [itemsPerPage, setItemsPerPage] = useState(8);
   const [search, setSearch] = useState("");
   const { register, handleSubmit } = useForm();
-  const [sort, setSort] = useState<{ field: string; order: "asc" | "desc" } | null>(
-    {
-      field: "price",
-      order: "desc"
-    }
-  );
-  
+  const [sort, setSort] = useState<{ field: string; order: "asc" | "desc" } | null>({
+    field: "price",
+    order: "desc",
+  });
+
   const query = useMemo(() => {
-      const filters = [];
-  
-      if (selectedCategories.length > 0) {
-        selectedCategories.forEach(category => {
-          filters.push({ name: "category", value: category });
-        });
-      }
-      if (selectedBrands.length > 0) {
-        selectedBrands.forEach(brand => {
-          filters.push({ name: "brand", value: brand });
-        });
-      }
-  
-      if (sort) {
-        if (sort.field === 'price') {
-          if (sort.order === 'asc') {
-            filters.push({ name: "sortBy", value: "price" });
-          } else {
-            filters.push({ name: "sortBy", value: "-price" });
-          }
+    const filters = [];
+
+    if (selectedCategories.length > 0) {
+      selectedCategories.forEach((category) => {
+        filters.push({ name: "category", value: category });
+      });
+    }
+    if (selectedBrands.length > 0) {
+      selectedBrands.forEach((brand) => {
+        filters.push({ name: "brand", value: brand });
+      });
+    }
+
+    if (sort) {
+      if (sort.field === "price") {
+        if (sort.order === "asc") {
+          filters.push({ name: "sortBy", value: "price" });
+        } else {
+          filters.push({ name: "sortBy", value: "-price" });
         }
       }
-    
+    }
+
     if (currentPage) {
       filters.push({ name: "page", value: currentPage });
     }
@@ -70,36 +69,28 @@ export default function Products() {
     if (search) {
       filters.push({ name: "search", value: search.search });
     }
-  
-      return filters;
+
+    return filters;
   }, [selectedCategories, currentPage, itemsPerPage, search, sort, selectedBrands]);
-  
+
   const { data, isLoading, error } = useGetAllProductsQuery(query);
 
   const validItemsPerPage = itemsPerPage >= 4 ? itemsPerPage : 8;
-  const numOfPages = Math.ceil((data?.data?.totalData) / validItemsPerPage);
-  
+  const numOfPages = Math.ceil(data?.data?.totalData / validItemsPerPage);
+
   useMemo(() => {
     if (data?.data?.result) {
-      const uniqueBrands = Array.from(
-        new Set(data.data.result.map((product) => product.brand))
-      );
+      const uniqueBrands = Array.from(new Set(data.data.result.map((product) => product.brand)));
       setBrands(uniqueBrands);
     }
   }, [data]);
 
-  // console.log("Available Brands:", brands); // Check extracted brands
-
-
-  if (isLoading) return <p>Loading products...</p>;
-  if (error) return <p>Failed to load products.</p>;
-
-  const onSubmit = (data:string) => {
+  const onSubmit = (data: string) => {
     setSearch(data);
   };
 
   const handleSort = (field: "price") => {
-    setSort(prevSort => {
+    setSort((prevSort) => {
       if (prevSort?.field === field) {
         return { field, order: prevSort.order === "asc" ? "desc" : "asc" };
       }
@@ -118,51 +109,93 @@ export default function Products() {
             className="w-40 bg-transparent px-3 focus:outline-none"
             {...register("search", { required: false })}
           />
-          <input className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded-full cursor-pointer" type="submit" value="Search"/>
+          <input className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded-full cursor-pointer" type="submit" value="Search" />
         </form>
         <div className="flex items-center text-xl">
           <span className="me-1 text-base">Price:</span>
           <div className="border border-red-500 flex p-[2px]">
-            <span onClick={() => handleSort("price")} className={`${sort?.field === "price" && sort.order === "asc" ? "text-red-500" : ""} cursor-pointer`} >
-                <BiArrowToBottom />
+            <span
+              onClick={() => handleSort("price")}
+              className={`${sort?.field === "price" && sort.order === "asc" ? "text-red-500" : ""} cursor-pointer`}
+            >
+              <BiArrowToBottom />
             </span>
-            <span onClick={() => handleSort("price")} className={`${sort?.field === "price" && sort.order === "desc" ? "text-red-500" : ""} cursor-pointer`} >
-                <BiArrowToTop />
+            <span
+              onClick={() => handleSort("price")}
+              className={`${sort?.field === "price" && sort.order === "desc" ? "text-red-500" : ""} cursor-pointer`}
+            >
+              <BiArrowToTop />
             </span>
           </div>
         </div>
         <div>
-          <FilterDropdown selectedCategories={selectedCategories} setSelectedCategories={setSelectedCategories} selectedBrands={selectedBrands} setSelectedBrands={setSelectedBrands}  brands={brands} />
+          <FilterDropdown
+            selectedCategories={selectedCategories}
+            setSelectedCategories={setSelectedCategories}
+            selectedBrands={selectedBrands}
+            setSelectedBrands={setSelectedBrands}
+            brands={brands}
+          />
         </div>
       </div>
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        {Array.isArray(data?.data?.result) && data?.data?.result.length > 0 ? (
-          data?.data?.result.map((product: TProduct) => {
-            return <ProductCard key={product?._id} product={product} />;
-          })) :
-          (<p className="text-center col-span-full">No products available.</p>
-        )}
-      </div>
+
+      {/* Product Grid */}
+      {isLoading ? (
+        // Skeleton Loader
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          {Array.from({ length: itemsPerPage }).map((_, index) => (
+            <div
+              key={`skeleton-${index}`}
+              className="p-4 border rounded-lg shadow-md animate-pulse"
+            >
+              <div className="h-28 bg-gray-300 rounded"></div>
+              <div className="h-4 bg-gray-300 w-28 my-2 rounded"></div>
+              <div className="h-4 bg-gray-300 w-full rounded"></div>
+              <div className="h-4 bg-gray-300 w-full mt-1 rounded"></div>
+            </div>
+          ))}
+        </div>
+      ) : error ? (
+        <p className="text-center col-span-full">Failed to load products.</p>
+      ) : Array.isArray(data?.data?.result) && data?.data?.result.length > 0 ? (
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          {data?.data?.result.map((product: TProduct) => (
+            <ProductCard key={product?._id} product={product} />
+          ))}
+        </div>
+      ) : (
+        // Full-width "No Products Available" section
+        <div className="my-10 w-full flex flex-col justify-center items-center">
+                  <img className="max-w-md" src={noProductImg} alt="" />
+                  <p className="text-center col-span-full">No products available right now. <br /> Come back later...</p>
+          </div>
+      )}
+
+      {/* Pagination */}
       <div className="flex justify-end items-center my-3 gap-3">
         <label className="capitalize">Items per page: </label>
-      <input onBlur={(e)=>setItemsPerPage(Number(e.target.value))} type="text" placeholder="8" className={`border focus:outline-none w-10 text-center rounded-md py-1`} />
-      {numOfPages > 1 && (
-        <div className="">
-          <div className="join gap-2">
-            {Array.from({ length: numOfPages }, (_, i) => i + 1).map((page) => (
-              <button
-                key={page}
-                className={`join-item px-3 py-1 border ${currentPage === page ? "bg-purple-500 text-white" : ""
-                  }`}
-                onClick={() => setCurrentPage(page)}
-              >
-                {page}
-              </button>
-            ))}
+        <input
+          onBlur={(e) => setItemsPerPage(Number(e.target.value))}
+          type="text"
+          placeholder="8"
+          className={`border focus:outline-none w-10 text-center rounded-md py-1`}
+        />
+        {numOfPages > 1 && (
+          <div className="">
+            <div className="join gap-2">
+              {Array.from({ length: numOfPages }, (_, i) => i + 1).map((page) => (
+                <button
+                  key={page}
+                  className={`join-item px-3 py-1 border ${currentPage === page ? "bg-purple-500 text-white" : ""
+                    }`}
+                  onClick={() => setCurrentPage(page)}
+                >
+                  {page}
+                </button>
+              ))}
+            </div>
           </div>
-          
-        </div>
-      )}
+        )}
       </div>
     </div>
   );

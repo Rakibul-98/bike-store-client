@@ -1,12 +1,12 @@
 import { FieldValues, useForm } from "react-hook-form";
-import { Link } from "react-router-dom";
-// import { useAppDispatch } from "../../redux/features/hooks";
+import { Link, useNavigate } from "react-router-dom";
 import { useRegistrationMutation } from "../../redux/features/auth/authApi";
+import registerImage from "../../assets/images/register.svg";
+import toast from "react-hot-toast";
 
 export default function Register() {
-
-  // const dispatch = useAppDispatch();
-  const { register, handleSubmit, formState: { errors } } = useForm({
+  const navigate = useNavigate();
+  const { register, handleSubmit, reset, formState: { errors } } = useForm({
     defaultValues: {
       user_name: "User 1",
       email: "user1@example.com",
@@ -17,25 +17,81 @@ export default function Register() {
   const [registration] = useRegistrationMutation();
 
   const onSubmit = async (data: FieldValues) => {
-    await registration(data);
-    console.log(data)
-    // dispatch(registerUser(data));
-  }
-  
+    try {
+      const res = await registration(data).unwrap(); // Unwrap the response
+
+      if (res?.success || res?.user) { 
+        toast.success("Registration successful!");
+        navigate("/login");
+        reset();
+      } else {
+        toast.error("Something went wrong. Please try again.");
+      }
+    } catch (err: any) {
+      toast.error(err?.data?.message || "Registration failed!");
+    }
+  };
+
   return (
-    <div>
-      <h1>Register</h1>
-      <form className="form-control" onSubmit={handleSubmit(onSubmit)}>
-        <input className="border-2" {...register("user_name", { required: true })} />
-      {errors.user_name && <span>This field is required</span>}
-      <input className=" border-2" {...register("email", { required: true })} />
-      {errors.email && <span>This field is required</span>}
-      <input className=" border-2" {...register("password", { required: true })} />
-      {errors.password && <span>This field is required</span>}
-      
-      <input className="btn" type="submit" />
-    </form>
-      <Link to="/login">Login</Link>
+    <div className="my-10 min-h-[80vh] flex items-center justify-center px-4">
+      <div className="bg-white shadow-lg rounded-lg overflow-hidden flex flex-col md:flex-row max-w-4xl w-full border">
+        
+        {/* Left Section - Form */}
+        <div className="md:w-1/2 w-full p-8">
+          <h2 className="text-2xl font-bold text-gray-700 text-center mb-6">
+            Create an Account
+          </h2>
+
+          <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
+            <div>
+            <label >User Name</label>
+            <input
+              {...register("user_name", { required: "Username is required" })}
+              className={`${errors.user_name && "border-red-500 focus:outline-red-500"} w-full px-4 py-2 border border-gray-300 rounded-lg`}
+              placeholder="Username"
+            />
+            </div>
+
+            <div>
+            <label >Email</label>
+            <input
+              {...register("email", { required: "Email is required" })}
+              className={`${errors.email && "border-red-500 focus:outline-red-500"} w-full px-4 py-2 border border-gray-300 rounded-lg`}
+              placeholder="Email"
+            />
+            </div>
+
+            <div>
+            <label >Password</label>
+            <input
+              {...register("password", { required: "Password is required" })}
+              type="password"
+              className={`${errors.password && "border-red-500 focus:outline-red-500"} w-full px-4 py-2 border border-gray-300 rounded-lg`}
+              placeholder="Password"
+            />
+            </div>
+
+            <button
+              type="submit"
+              className="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition duration-300"
+            >
+              Register
+            </button>
+          </form>
+
+          <p className="text-center text-gray-600 mt-4">
+            Already have an account?{" "}
+            <Link to="/login" className="text-blue-500 hover:underline">
+              Login
+            </Link>
+          </p>
+        </div>
+
+        {/* Right Section - Image */}
+        <div className="md:w-1/2 hidden md:flex items-center justify-center bg-gray-50 p-8">
+          <img src={registerImage} alt="Register" className="w-80" />
+        </div>
+      </div>
     </div>
-  )
+  );
 }
