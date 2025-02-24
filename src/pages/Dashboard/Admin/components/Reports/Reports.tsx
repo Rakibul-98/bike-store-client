@@ -32,12 +32,11 @@ export default function Reports() {
   ];
 
   return (
-    <div className="px-5">
+    <div className="mb-5">
       <h1 className="text-2xl font-bold mb-4">Reports</h1>
       <p className="text-gray-600 mb-6">View and analyze sales, inventory, and other data.</p>
 
-      {/* Sales Summary */}
-      <div className="grid grid-cols-3 gap-4 mb-6">
+      <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-4 mb-6">
         <div className="bg-blue-100 p-4 rounded-lg text-center">
           <h2 className="text-lg font-semibold">Total Revenue</h2>
           <p className="text-xl font-bold text-blue-700">${salesSummary.totalRevenue}</p>
@@ -50,10 +49,6 @@ export default function Reports() {
           <h2 className="text-lg font-semibold">Total Profit</h2>
           <p className="text-xl font-bold text-yellow-700">${salesSummary.totalProfit}</p>
         </div>
-      </div>
-
-      {/* Order Statistics */}
-      <div className="grid grid-cols-3 gap-4 mb-6">
         <div className="bg-gray-100 p-4 rounded-lg text-center">
           <h2 className="text-lg font-semibold">Pending Orders</h2>
           <p className="text-xl font-bold">{orderStats.pending}</p>
@@ -68,7 +63,6 @@ export default function Reports() {
         </div>
       </div>      
 
-      {/* Revenue Chart */}
       <h2 className="text-xl font-bold mb-3">Monthly Revenue</h2>
       <div className="w-full h-64 bg-gray-100 p-4 rounded-lg">
         <ResponsiveContainer width="100%" height="100%">

@@ -7,7 +7,8 @@ import { RootState } from "../features/store";
 import { logout, setUser } from "../features/auth/authSlice";
 
 const baseQuery = fetchBaseQuery({
-  baseUrl: "https://bike-solution-server.onrender.com/api",
+  // baseUrl: "https://bike-solution-server.onrender.com/api",
+  baseUrl: "http://localhost:8000/api",
   credentials: "include",
   prepareHeaders: (headers, { getState }) => {
     const token = (getState() as RootState).auth.token;
@@ -27,7 +28,8 @@ const baseQueryWithRefreshToken: BaseQueryFn = async (
   if (result?.error?.status === 401) {
     // refresh token
     const res = await fetch(
-      "https://bike-solution-server.onrender.com/api/auth/refresh-token",
+      // "https://bike-solution-server.onrender.com/api/auth/refresh-token",
+      "http://localhost:8000/api/auth/refresh-token",
       {
         method: "POST",
         credentials: "include",

@@ -88,20 +88,20 @@ export default function Products() {
   };
 
   return (
-    <div className="mb-5 min-h-[70vh]">
+    <div className="mb-5 min-h-[70vh] text-sm md:text-base">
       <div className="flex items-center justify-end gap-5 my-5">
-        <h1 className="text-2xl font-semibold me-auto">Available Products</h1>
-        <form onSubmit={handleSubmit(onSubmit)} className="flex items-center justify-between bg-gray-100 rounded-full w-60">
+        <h1 className="hidden md:block text-xl font-semibold me-auto">Available Products</h1>
+        <form onSubmit={handleSubmit(onSubmit)} className="flex items-center justify-between bg-gray-100 rounded-full w-[150px] md:w-44">
           <input
             type="text"
             placeholder="Search here..."
-            className="w-40 bg-transparent px-3 focus:outline-none"
+            className="w-24 md:w-28 bg-transparent px-3 focus:outline-none"
             {...register("search", { required: false })}
           />
           <input className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded-full cursor-pointer" type="submit" value="Search" />
         </form>
-        <div className="flex items-center text-xl">
-          <span className="me-1 text-base">Price:</span>
+        <div className="flex items-center">
+          <span className="me-1">Price:</span>
           <div className="border border-red-500 flex p-[2px]">
             <span
               onClick={() => handleSort("price")}

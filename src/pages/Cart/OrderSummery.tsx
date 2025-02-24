@@ -1,7 +1,6 @@
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-// import { TProduct } from "../Products/Products";
-import {  SubmitHandler, useForm } from "react-hook-form";
+import { SubmitHandler, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { useEffect, useState } from "react";
 import { applyCoupon, clearCart } from "../../redux/features/cart/CartSlice";
@@ -9,14 +8,15 @@ import { RootState } from "../../redux/features/store";
 
 type CouponType = {
   coupon: string;
-}
+};
 
-export default function OrderSummery() {
+export default function OrderSummary() {
   const { register, handleSubmit } = useForm<CouponType>();
-  const { totalAmount, totalItems, shippingCost, tax, discount, grandTotal, appliedCoupon } = useSelector((state: RootState) => state.cart);
+  const { totalAmount, totalItems, shippingCost, tax, discount, grandTotal, appliedCoupon } = useSelector(
+    (state: RootState) => state.cart
+  );
   const [enteredCoupon, setEnteredCoupon] = useState<string | null>(null);
 
-  
   const dispatch = useDispatch();
 
   const onSubmit: SubmitHandler<CouponType> = (data) => {
@@ -40,7 +40,7 @@ export default function OrderSummery() {
 
   const handleRemoveCoupon = () => {
     dispatch(applyCoupon(null));
-  }
+  };
 
   return (
     <div className="cart-summary bg-gray-100 p-5 rounded-md shadow-lg">
@@ -48,40 +48,68 @@ export default function OrderSummery() {
       <hr className="h-[2px] bg-gray-600 my-2" />
       <div className="w-10/12 mx-auto font-mono">
         <div>
-          <p className="flex justify-between"><span className="font-bold text-lg">Total items:</span> {totalItems}</p>
-          <p className="flex justify-between"><span className="font-bold text-lg">Subtotal:</span> ${totalAmount.toFixed(2)}</p>
-          <p className="flex justify-between"><span className="font-bold text-lg">Shipping:</span> ${shippingCost.toFixed(2)}</p>
-          <p className="flex justify-between"><span className="font-bold text-lg">Tax:</span> ${tax.toFixed(2)}</p>
+          <p className="flex justify-between">
+            <span className="font-bold text-lg">Total items:</span> {totalItems}
+          </p>
+          <p className="flex justify-between">
+            <span className="font-bold text-lg">Subtotal:</span> ${totalAmount.toFixed(2)}
+          </p>
+          <p className="flex justify-between">
+            <span className="font-bold text-lg">Shipping:</span> ${shippingCost.toFixed(2)}
+          </p>
+          <p className="flex justify-between">
+            <span className="font-bold text-lg">Tax:</span> ${tax.toFixed(2)}
+          </p>
 
-          {/* Coupon Form */}
-          <form onSubmit={handleSubmit(onSubmit)} className="my-3 flex justify-end w-[99%]">
-            <input 
-              className="flex-1 py-1 px-2 focus:outline-none border rounded" 
-              type="text" 
-              placeholder="Enter Coupon" 
-              {...register("coupon")} 
+          {/* Responsive Coupon Form */}
+          <form onSubmit={handleSubmit(onSubmit)} className="my-3 grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <input
+              className="w-full py-1 px-2 focus:outline-none border rounded"
+              type="text"
+              placeholder="Enter Coupon"
+              {...register("coupon")}
             />
-            <input 
-              className="bg-primary px-3 py-1 text-white ms-3 rounded cursor-pointer hover:bg-primary-dark" 
-              type="submit" 
-              value="Apply" 
-            />
+            <button
+              className="w-full bg-primary px-3 py-1 text-white rounded cursor-pointer hover:bg-primary-dark"
+              type="submit"
+            >
+              Apply
+            </button>
           </form>
 
           {appliedCoupon && discount > 0 && (
-            <p className="flex justify-between"><span className="font-bold text-lg">Saved: <span className="text-xs">({appliedCoupon})<sup onClick={handleRemoveCoupon} className="text-sm hover:text-red-500 cursor-pointer">x</sup></span></span> ${discount.toFixed(2)}</p>
+            <p className="flex justify-between">
+              <span className="font-bold text-lg">
+                Saved:{" "}
+                <span className="text-xs">
+                  ({appliedCoupon})
+                  <sup
+                    onClick={handleRemoveCoupon}
+                    className="text-sm hover:text-red-500 cursor-pointer"
+                  >
+                    x
+                  </sup>
+                </span>
+              </span>{" "}
+              ${discount.toFixed(2)}
+            </p>
           )}
 
           <hr className="h-[2px] bg-gray-600 my-2" />
-          <p className="flex justify-between"><span className="font-bold text-lg">Grand Total:</span> ${grandTotal}</p>
+          <p className="flex justify-between">
+            <span className="font-bold text-lg">Grand Total:</span> ${grandTotal}
+          </p>
         </div>
 
         {/* Action Buttons */}
-        <div className="flex items-center my-5 gap-3">
-          <button onClick={() => {
-            const modal = document.getElementById('clear-cart-modal') as HTMLDialogElement;
-            modal?.showModal();
-          }} className="bg-red-600 w-7/12 py-2 text-white font-bold rounded">
+        <div className="flex flex-col sm:flex-row items-center my-5 gap-3">
+          <button
+            onClick={() => {
+              const modal = document.getElementById("clear-cart-modal") as HTMLDialogElement;
+              modal?.showModal();
+            }}
+            className="w-full sm:w-7/12 bg-red-600 py-2 text-white font-bold rounded"
+          >
             Clear cart
           </button>
           <dialog id="clear-cart-modal" className="modal modal-bottom sm:modal-middle">
@@ -89,15 +117,20 @@ export default function OrderSummery() {
               <h3 className="font-bold text-lg">Are You Sure to clear cart items?</h3>
               <p className="py-4">This action could not be undone!</p>
               <div className="modal-action">
-                  <form className="flex gap-5" method="dialog">
-                  <button onClick={handleClearCart} className="bg-red-500 px-3 py-1 text-white hover:bg-red-600">Confirm</button>          
-                  <button className=" px-3 py-1 bg-gray-300 hover:bg-gray-200">Close</button>
+                <form className="flex gap-5" method="dialog">
+                  <button
+                    onClick={handleClearCart}
+                    className="bg-red-500 px-3 py-1 text-white hover:bg-red-600"
+                  >
+                    Confirm
+                  </button>
+                  <button className="px-3 py-1 bg-gray-300 hover:bg-gray-200">Close</button>
                 </form>
               </div>
             </div>
           </dialog>
-          <Link 
-            className="bg-gradient-to-br from-purple-500 to-pink-500 w-7/12 text-center py-2 text-white font-bold rounded" 
+          <Link
+            className="w-full sm:w-7/12 bg-gradient-to-br from-purple-500 to-pink-500 text-center py-2 text-white font-bold rounded"
             to="/checkout"
           >
             Checkout

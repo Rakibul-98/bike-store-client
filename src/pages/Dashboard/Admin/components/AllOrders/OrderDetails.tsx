@@ -72,8 +72,6 @@ type OrderPropType = {
 }
 
 export default function OrderDetails({ order }: OrderPropType) {
-  
-  console.log(order)
 
   const [deleteOrder] = useDeleteOrderMutation();
 
@@ -153,7 +151,7 @@ export default function OrderDetails({ order }: OrderPropType) {
                 </svg>
               </div>
               <div
-                className={`timeline-end px-2 py-1 uppercase text-xs bg-gray-100`}
+                className={`timeline-end md:px-2 py-1 uppercase text-xs md:bg-gray-100`}
               >
                 {stepData.step}
               </div>
