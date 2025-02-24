@@ -88,7 +88,7 @@ export default function Products() {
   };
 
   return (
-    <div className="mb-5">
+    <div className="mb-5 min-h-[70vh]">
       <div className="flex items-center justify-end gap-5 my-5">
         <h1 className="text-2xl font-semibold me-auto">Available Products</h1>
         <form onSubmit={handleSubmit(onSubmit)} className="flex items-center justify-between bg-gray-100 rounded-full w-60">
