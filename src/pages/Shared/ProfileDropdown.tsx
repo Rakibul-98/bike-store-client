@@ -9,7 +9,7 @@ interface ProfileDropdownProps {
 
 const ProfileDropdown = ({ user, handleLogout }: ProfileDropdownProps) => {
 
-    const { name, profile_image, role } = user;
+    const { user_name, profile_image, role } = user;
     const image = profile_image || "https://ibb.co.com/mCdw2wR9"
 
   return (
@@ -23,7 +23,7 @@ const ProfileDropdown = ({ user, handleLogout }: ProfileDropdownProps) => {
           <img src={image} alt="" />
           </div>
         </div>
-        <p className=" text-black">{ name}</p>
+        <p className=" text-black">{ user_name}</p>
         <Link className="w-full py-1 mt-2 bg-pink-500 hover:bg-pink-600" to={`/${role}Dashboard`}>Dashboard</Link>
         <Link className="w-full py-1 mt-2 bg-primary hover:bg-blue-600" to="/profile">View Profile</Link>
         <button onClick={handleLogout} className="w-full py-1 mt-2 bg-red-500 hover:bg-red-600 uppercase">Logout</button>
