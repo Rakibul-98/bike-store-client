@@ -43,7 +43,7 @@ export default function AllUsers() {
             <tr key={user._id}>
               <td>
                 <div className="flex gap-3 items-center">
-                  <h4 className="font-semibold">{ user.name}</h4>
+                  <h4 className="font-semibold">{ user?.user_name}</h4>
                 </div>
               </td>
               <td>{user?.email}</td>
@@ -56,12 +56,12 @@ export default function AllUsers() {
                       :  "bg-green-500"
                   }`}
                 >
-                  {user?.isBlocked? "Blocked" : "Active"}
+                  {user?.isBlocked ? "Blocked" : "Active"}
                 </span>
               </td>
               <td>
                 <button
-                  disabled={user?.isBlocked}
+                  disabled={user?.isBlocked || user?.role === "admin" }
                   onClick={() => {
                     handleBlockUser(user?._id);
                   }}

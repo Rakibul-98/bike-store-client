@@ -40,7 +40,7 @@ export type UserType = {
   updatedAt: string;
   email: string;
   isBlocked: boolean;
-  name: string;
+  user_name: string;
   profile_image: string;
   role: string;
   __v: number;

@@ -45,8 +45,10 @@ export default function UserProfile() {
   }, [user, reset]);
 
   const onSubmit = async (data: FormData) => {
+
+    console.log(data)
     try {
-      const res = await updateUser({ userId: user.data._id, data }).unwrap();
+      const res = await updateUser({ userId: user?.data?._id, data }).unwrap();
 
       if (res?.success) {
         toast.success("Profile updated successfully!");
