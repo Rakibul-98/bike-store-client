@@ -1,51 +1,75 @@
-# React + TypeScript + Vite
+# Bike Solution
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A modern, responsive e-commerce platform for purchasing bikes, featuring secure authentication, seamless checkout, order tracking, and an intuitive user experience.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **Responsive Design** – Ensuring seamless performance across all devices.
+- **User Authentication** – Secure registration and login functionality.
+- **Checkout & Payment Integration** – Powered by **SurjoPay** for smooth transactions.
+- **User Dashboard** – Order tracking and account management.
+- **Real-time Notifications** – Success toasts for important actions.
+- **Robust Error Handling** – Providing clear validation messages.
 
-## Expanding the ESLint configuration
+## Tech Stack
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+**Frontend:** React, Redux Toolkit, React Router, TailwindCSS, DaisyUI  
+**State Management:** Redux Persist  
+**Forms & Validation:** React Hook Form  
+**Notifications & UI Enhancements:** React Hot Toast, Recharts, React Icons  
+**Authentication & Security:** JWT Decode  
+**Build & Development:** Vite, TypeScript  
 
-- Configure the top-level `parserOptions` property like this:
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+## Live Demo
+
+[Live Demo](https://bike-solution-rakibul.vercel.app/)
+
+## Screenshots
+
+![Homepage](https://i.ibb.co.com/wZddPbw4/Screenshot-2025-02-24-203853.png
+)
+![products](https://i.ibb.co/3ysy2HNP/Screenshot-2025-02-24-203929.png
+)
+![Admin panel](https://i.ibb.co/gFRtxfZj/Screenshot-2025-02-24-204035.png
+)
+![Reports](https://i.ibb.co/S7xx9G9x/Screenshot-2025-02-24-204102.png
+)
+
+
+## Installation & Setup
+
+### Prerequisites
+Ensure you have **Node.js** and **npm** installed on your system.
+
+### Clone the Repository
+
+```bash
+git clone https://github.com/Rakibul-98/bike-store-client.git
 ```
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+Navigate to the project directory:
 
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
-
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
+```bash
+cd bike-store-client
 ```
-# bike-store-client
+
+### Install Dependencies
+
+```bash
+npm install
+```
+
+### Run the Development Server
+
+```bash
+npm rn dev
+```
+
+## Deployment
+
+This project is deployed using **Vercel** for optimal performance and scalability.
+
+## Contact & Support
+
+For issues, feature requests, or contributions, feel free to open an issue or reach out. Let's build something amazing together!
