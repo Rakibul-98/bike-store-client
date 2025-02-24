@@ -22,11 +22,6 @@ export default function OrderSummery() {
   const onSubmit: SubmitHandler<CouponType> = (data) => {
     setEnteredCoupon(data.coupon);
     dispatch(applyCoupon(data.coupon));
-    if (data.coupon !== appliedCoupon) {
-      toast.error("Invalid or expired coupon!");
-    } else {
-      toast.success("Coupon applied successfully!");
-    }
   };
 
   useEffect(() => {

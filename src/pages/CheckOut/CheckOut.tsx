@@ -61,10 +61,9 @@ export default function CheckOut() {
       const res = await createOrder(orderData).unwrap();
       const url = res.data;
       if (!res?.error) {
-        toast.success("Order placed successfully!");
         setTimeout(() => {
           window.location.href = url;
-        }, 1000)
+        }, 100)
         dispatch(clearCart());
       } else {
         toast.error("Something went wrong!");
