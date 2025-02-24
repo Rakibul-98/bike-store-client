@@ -1,28 +1,32 @@
 import { Link } from "react-router-dom";
-import { applyCoupon, clearCart } from "../../redux/features/cart/cartSlice";
 import { useDispatch, useSelector } from "react-redux";
 // import { TProduct } from "../Products/Products";
-import {  useForm } from "react-hook-form";
+import {  SubmitHandler, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { useEffect, useState } from "react";
+import { applyCoupon, clearCart } from "../../redux/features/cart/CartSlice";
+import { RootState } from "../../redux/features/store";
+
+type CouponType = {
+  coupon: string;
+}
 
 export default function OrderSummery() {
-  const { register, handleSubmit } = useForm();
-  const { totalAmount, totalItems, shippingCost, tax, discount, grandTotal, appliedCoupon } = useSelector(state => state.cart);
-  const [enteredCoupon, setEnteredCoupon] = useState(null);
+  const { register, handleSubmit } = useForm<CouponType>();  const { totalAmount, totalItems, shippingCost, tax, discount, grandTotal, appliedCoupon } = useSelector((state: RootState) => state.cart);
+  const [enteredCoupon, setEnteredCoupon] = useState<string | null>(null);
 
   
   const dispatch = useDispatch();
 
-  const onSubmit = (data) => {
+  const onSubmit: SubmitHandler<CouponType> = (data) => {
+    console.log(data)
     setEnteredCoupon(data.coupon);
     dispatch(applyCoupon(data.coupon));
-    // if (data.coupon !== appliedCoupon) {
-    //   console.log(data.coupon, appliedCoupon);
-    //   toast.error("Invalid or expired coupon!");
-    // } else {
-    //   toast.success("Coupon applied successfully!");
-    // }
+    if (data.coupon !== appliedCoupon) {
+      toast.error("Invalid or expired coupon!");
+    } else {
+      toast.success("Coupon applied successfully!");
+    }
   };
 
   useEffect(() => {
@@ -69,7 +73,6 @@ export default function OrderSummery() {
             />
           </form>
 
-          {/* Show discount only if applied */}
           {appliedCoupon && discount > 0 && (
             <p className="flex justify-between"><span className="font-bold text-lg">Saved: <span className="text-xs">({appliedCoupon})<sup onClick={handleRemoveCoupon} className="text-sm hover:text-red-500 cursor-pointer">x</sup></span></span> ${discount.toFixed(2)}</p>
           )}
@@ -80,7 +83,10 @@ export default function OrderSummery() {
 
         {/* Action Buttons */}
         <div className="flex items-center my-5 gap-3">
-          <button onClick={() => document.getElementById('clear-cart-modal')?.showModal()} className="bg-red-600 w-7/12 py-2 text-white font-bold rounded">
+          <button onClick={() => {
+            const modal = document.getElementById('clear-cart-modal') as HTMLDialogElement;
+            modal?.showModal();
+          }} className="bg-red-600 w-7/12 py-2 text-white font-bold rounded">
             Clear cart
           </button>
           <dialog id="clear-cart-modal" className="modal modal-bottom sm:modal-middle">

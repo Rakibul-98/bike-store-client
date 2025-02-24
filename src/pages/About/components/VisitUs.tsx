@@ -37,15 +37,12 @@ export default function VisitUs() {
   return (
     <section className="py-10 bg-gray-100">
       <div className="container mx-auto px-6 md:px-12">
-        {/* Header Section */}
         <div className="text-center mb-12">
           <h2 className="text-4xl font-bold text-gray-900">Visit Us 📍</h2>
           <p className="text-gray-600 mt-3">Come and explore our store for the best biking experience!</p>
         </div>
 
-        {/* Contact & Location */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-          {/* Google Map */}
           <div className="w-full h-[300px] md:h-[400px]">
             <iframe
               title="Bike Store Location"
@@ -56,7 +53,6 @@ export default function VisitUs() {
             ></iframe>
           </div>
 
-          {/* Contact Info */}
           <div className="space-y-6">
             {contactInfo.map((item) => (
               <div key={item.id} className="flex items-center gap-4">

@@ -28,13 +28,11 @@ export default function Mission() {
   return (
     <section className="my-16 py-10 bg-gradient-to-l from-blue-100 to-white">
       <div className=" px-6 md:px-12">
-        {/* Header Section */}
         <div className="text-center mb-12">
           <h2 className="text-4xl font-bold text-gray-900">Our Mission & Values 🌍</h2>
           <p className="text-gray-600 mt-3">Driven by passion, committed to excellence.</p>
         </div>
 
-        {/* Mission Section */}
         <div className="flex flex-col md:flex-row items-center gap-12">
           <div className="w-full md:w-1/2">
             <img
@@ -54,7 +52,6 @@ export default function Mission() {
           </div>
         </div>
 
-        {/* Values Section */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-12">
           {valuesData.map((value, index) => (
             <div key={index} className="bg-white shadow-md rounded-xl p-5 text-center transition-all duration-300 hover:scale-105 hover:shadow-lg">

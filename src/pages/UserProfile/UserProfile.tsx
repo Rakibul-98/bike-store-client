@@ -63,8 +63,7 @@ export default function UserProfile() {
 
   return (
     <div className="my-10 min-h-[80vh] flex items-center justify-center">
-      <div className="md:w-96 shadow-lg rounded-xl p-6 text-center border bg-gray-50">
-        {/* Profile Image */}
+      <div className="sm:w-96 shadow-lg rounded-xl p-6 text-center border bg-gray-50">
         <div className="relative mx-auto w-24 h-24">
           <img
             src={user.data.profile_image || "https://via.placeholder.com/150"}
@@ -82,30 +81,25 @@ export default function UserProfile() {
           </button>
         </div>
 
-        {/* Image URL Input (Only visible when editing) */}
         {isEditing.profile_image && (
           <div className="mt-3">
             <input
               type="text"
               {...register("profile_image", { required: "Profile image URL is required" })}
-              className="w-full px-3 py-2 border rounded-md text-center"
+              className={`${errors.user_name && "border-red-500"} w-full px-3 py-2 border rounded-md outline-none `}
               placeholder="Enter image URL"
             />
-            {errors.profile_image && (
-              <p className="text-red-500 text-sm">{errors.profile_image.message}</p>
-            )}
           </div>
         )}
 
-        {/* Profile Form */}
         <form onSubmit={handleSubmit(onSubmit)} className="mt-4 space-y-4">
-          {/* User Name (Editable) */}
           <div className="flex justify-between gap-2 items-center py-2 rounded-lg">
             {isEditing.user_name ? (
               <input
                 type="text"
                 {...register("user_name", { required: "User name is required" })}
-                className="w-full px-3 py-2 border rounded-md outline-none"
+                className={`${errors.user_name && "border-red-500"} w-full px-3 py-2 border rounded-md outline-none`}
+                placeholder="Enter user name"
               />
             ) : (
               <span className="w-full font-bold">{user.data.user_name}</span>
@@ -119,9 +113,7 @@ export default function UserProfile() {
               <FiEdit3 className="text-gray-500" />
             </button>
           </div>
-          {errors.user_name && <p className="text-red-500 text-sm">{errors.user_name.message}</p>}
 
-          {/* Read-only Fields */}
           <div className="text-left space-y-2 text-gray-700">
             <p>
               <strong>Email:</strong> {user.data.email}

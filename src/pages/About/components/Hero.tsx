@@ -3,12 +3,10 @@ import { Link } from "react-router-dom";
 export default function Hero() {
   return (
     <section className="relative h-[60vh] flex items-center justify-center text-white">
-      {/* Background Image */}
       <div className="absolute inset-0 bg-[url('https://i.ibb.co.com/yn79Xrfj/store.jpg')] bg-cover bg-center">
         <div className="absolute inset-0 bg-gradient-to-r from-black/40 via-black/50 to-transparent"></div>
       </div>
 
-      {/* Hero Content */}
       <div className="relative z-10 text-center px-6 md:px-12 max-w-3xl">
         <h1 className="text-4xl md:text-6xl font-bold leading-tight drop-shadow-lg animate-fadeIn">
           Welcome to <span className="text-blue-400">Bike Solution</span>

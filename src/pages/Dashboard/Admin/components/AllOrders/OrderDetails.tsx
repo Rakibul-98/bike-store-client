@@ -1,3 +1,4 @@
+import toast from "react-hot-toast";
 import { useDeleteOrderMutation } from "../../../../../redux/features/orders/ordersApi";
 
 export default function OrderDetails({ order }) {
@@ -6,6 +7,7 @@ export default function OrderDetails({ order }) {
 
   const statusColors = {
     pending: "bg-yellow-500",
+    paid: "bg-lime-500",
     processing: "bg-blue-500",
     shipped: "bg-purple-500",
     delivered: "bg-green-500",
@@ -13,26 +15,33 @@ export default function OrderDetails({ order }) {
     returned: "bg-gray-500",
   };
 
-  // Define the order status steps with estimated delivery times
   const orderSteps = [
-    { step: "pending", deliveryTime: "21 days" },
+    { step: "pending", deliveryTime: "Make payment to complete the order" },
     { step: "processing", deliveryTime: "17 days" },
     { step: "shipped", deliveryTime: "14 days" },
-    { step: "delivered", deliveryTime: "Order has been delivered" },
-    { step: "cancelled", deliveryTime: "Order has ben cancelled" },
-    { step: "returned", deliveryTime: "Order is returned!" },
+    { step: "delivered", deliveryTime: "Order already has been delivered" },
   ];
 
-  // Determine the current step index
-  const currentStepIndex = orderSteps.findIndex((step) => step.step === order?.orderStatus);
+  // Map the order status to the timeline steps
+  const getTimelineStep = (orderStatus) => {
+    const status = orderStatus?.toLowerCase(); // Convert to lowercase for better comparison
+    if (status === "pending") return "pending";
+    if (status === "paid" || status === "processing") return "processing";
+    if (status === "shipped") return "shipped";
+    if (status === "delivered") return "delivered";
+    return "delivered"; // For cancelled and returned, show up to delivered
+  };
 
-  // Get the estimated delivery time based on the current order status
+  const timelineStep = getTimelineStep(order?.orderStatus);
+  const currentStepIndex = orderSteps.findIndex((step) => step.step === timelineStep);
+
   const estimatedDeliveryTime = orderSteps[currentStepIndex]?.deliveryTime || "Estimated delivery: Unknown";
 
-  const handleDelete = (orderId) => { 
-    console.log(orderId)
+  const handleDelete = (orderId) => {
     deleteOrder(orderId);
-  }
+    document.getElementById("order-details-modal")?.close();
+    toast.success("Items deleted successfully");
+  };
 
   return (
     <dialog id="order-details-modal" className="modal">
@@ -40,7 +49,7 @@ export default function OrderDetails({ order }) {
         <div className="flex justify-between items-center">
           <h2 className="text-xl font-bold">Order Details</h2>
           <p
-            className={`mt-2 px-3 py-1 rounded-full text-white text-sm font-semibold w-fit ${statusColors[order?.orderStatus]}`}
+            className={`mt-2 px-3 py-1 rounded-full text-white text-sm font-semibold w-fit ${statusColors[order?.orderStatus.toLowerCase()]}`}
           >
             {order?.orderStatus.toUpperCase()}
           </p>
@@ -50,7 +59,6 @@ export default function OrderDetails({ order }) {
         <ul className="timeline timeline-horizontal justify-center mt-3 mb-10">
           {orderSteps.map((stepData, index) => (
             <li className="h-10" key={stepData.step}>
-              {/* Horizontal line before each step (except the first) */}
               {index > 0 && <hr />}
               <div className="timeline-middle">
                 <svg
@@ -74,7 +82,6 @@ export default function OrderDetails({ order }) {
                 {stepData.step}
               </div>
 
-              {/* Horizontal line after each step (except the last) */}
               {index < orderSteps.length - 1 && <hr />}
             </li>
           ))}
@@ -85,7 +92,7 @@ export default function OrderDetails({ order }) {
           <span className="font-semibold">Order ID:</span> {order?._id}
         </p>
         <p className="text-sm text-gray-600">
-          <span className="font-semibold">Customer:</span> {order?.customer?.name} (
+          <span className="font-semibold">Customer:</span> {order?.customer?.user_name} (
           {order?.customer?.email})
         </p>
         <p className="text-sm text-gray-600">
@@ -103,12 +110,12 @@ export default function OrderDetails({ order }) {
               <span>
                 {item?.product?.name} - Qty: {item?.order_quantity}
               </span>
-              <span>${item?.price}</span>
+              <span>${item?.product?.price}</span>
             </li>
           ))}
         </ul>
 
-        <p className="text-lg font-semibold mt-3">Total Price: ${order?.totalPrice}</p>
+        <p className="text-lg font-semibold mt-3">Total Price: ${order?.totalAmount}</p>
 
         <div className="modal-action flex justify-end">
           { order?.customer?.role === 'customer' && order?.orderStatus === "pending" &&

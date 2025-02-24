@@ -1,15 +1,8 @@
 import { createSlice } from "@reduxjs/toolkit";
-
-interface CartItem {
-  _id: string;
-  cart_quantity: number;
-  available_quantity: number;
-  price: number;
-  [key: string]: any;
-}
+import { CartType, ItemType } from "../../../interfaces/interfaces";
 
 interface CartState {
-  items: CartItem[];
+  items: ItemType[];
   totalAmount: number;
   totalItems: number;
   shippingCost: number;
@@ -29,7 +22,7 @@ const loadCartFromLocalStorage = (): Partial<CartState> => {
 
     const validItems = Array.isArray(parsed?.items)
       ? parsed.items.filter(
-          (item: any) =>
+          (item: ItemType) =>
             item?._id &&
             item?.cart_quantity &&
             item?.available_quantity &&
@@ -78,7 +71,7 @@ const saveCartToLocalStorage = (state: CartState) => {
   }
 };
 
-const calculateTotals = (state) => {
+const calculateTotals = (state: CartType) => {
   state.totalAmount = state.items.reduce(
     (total, item) => total + item.price * item.cart_quantity,
     0
@@ -206,8 +199,7 @@ const cartSlice = createSlice({
           state.discount
         ).toFixed(2)
       );
-
-      saveCartToLocalStorage(state.items);
+      saveCartToLocalStorage(state);
     },
   },
 });

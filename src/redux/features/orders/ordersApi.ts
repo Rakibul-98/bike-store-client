@@ -32,6 +32,14 @@ const ordersApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ["orders"],
     }),
+    verifyPayment: builder.query({
+      query: ({ order_id }) => ({
+        url: `/orders/verify`,
+        params: { order_id },
+        method: "GET",
+      }),
+      providesTags: ["orders"],
+    }),
     updateOrder: builder.mutation({
       query: ({ id, data }) => ({
         url: `/orders/${id}`,
@@ -56,4 +64,5 @@ export const {
   useCreateOrderMutation,
   useUpdateOrderMutation,
   useDeleteOrderMutation,
+  useVerifyPaymentQuery,
 } = ordersApi;

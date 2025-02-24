@@ -1,10 +1,15 @@
 import { useDispatch } from "react-redux";
-import { decreaseQuantity, increaseQuantity, removeFromCart } from "../../redux/features/cart/cartSlice";
 import { TbTrashX } from "react-icons/tb";
 import { LuMinus, LuPlus } from "react-icons/lu";
 import toast from "react-hot-toast";
+import { decreaseQuantity, increaseQuantity, removeFromCart } from "../../redux/features/cart/CartSlice";
+import { ItemType } from "../../interfaces/interfaces";
 
-export default function CartItem({ item }) {
+type CartItemProps = {
+  item: ItemType;
+}
+
+export default function CartItem({ item }: CartItemProps) {
 
     const dispatch = useDispatch();
     

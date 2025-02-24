@@ -1,5 +1,4 @@
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
 import { useGetUserByEmailQuery } from "../../redux/features/users/usersApi";
 import toast from "react-hot-toast";
 import { clearCart } from "../../redux/features/cart/CartSlice";
@@ -12,7 +11,6 @@ export default function CheckOut() {
   const { totalAmount, shippingCost, tax, discount, grandTotal } = useSelector( (state) => state?.cart );
 
   const dispatch = useDispatch();
-  const navigate = useNavigate();
 
   const [createOrder] = useCreateOrderMutation();
 
@@ -22,7 +20,7 @@ export default function CheckOut() {
   const { register, handleSubmit, formState: {  errors } } = useForm();
 
   if (isLoading) return <CheckOutSkeleton/>;
-  if (error) return <div>Error loading user data</div>;
+  if (error) return toast.error("Error loading user data");
 
   const onSubmit = async (data) => {
     if (!data.address || !data.phone) {
@@ -43,10 +41,15 @@ export default function CheckOut() {
 
     try {
       const res = await createOrder(orderData).unwrap();
+      console.log(res)
+      const url = res.data;
       if (!res?.error) {
-        dispatch(clearCart());
         toast.success("Order placed successfully!");
-        navigate("/order-success");
+        console.log(res)
+        setTimeout(() => {
+          window.location.href = url;
+        }, 1000)
+        dispatch(clearCart());
       } else {
         toast.error("Something went wrong!");
       }

@@ -27,7 +27,9 @@ export default function AllOrders() {
     if (status === "All Orders") {
       setFilteredOrders(orders?.data || []);
     } else {
-      setFilteredOrders(orders?.data.filter((order) => order.orderStatus === status) || []);
+      setFilteredOrders(
+        orders?.data.filter((order) => order.orderStatus.toLowerCase() === status.toLowerCase()) || []
+      );
     }
   };
 
@@ -43,11 +45,11 @@ export default function AllOrders() {
 
   const categoryOptions = ["All Orders", ...statusOptions];
 
-  if (isLoading) return <TableSkeleton/>;
+  if (isLoading) return <TableSkeleton />;
   if (error) return <p>Failed to load orders.</p>;
 
   return (
-    <div >
+    <div>
       <OrderDetails order={detailOrder} />
       <UpdateOrderStatus selectedOrder={selectedOrder} statusOptions={statusOptions} />
 
@@ -96,23 +98,25 @@ export default function AllOrders() {
                   </span>
                 </div>
               </td>
-              <td>{order?.customer?.name}</td>
-              <td>${order.totalPrice}</td>
+              <td>{order?.customer?.user_name}</td>
+              <td>${order.totalAmount}</td>
               <td>{new Date(order.createdAt).toLocaleString()}</td>
               <td>
                 <span
                   className={`px-3 py-1 rounded-full text-white text-[10px] font-semibold uppercase ${
-                    order.orderStatus === "pending"
+                    order?.orderStatus.toLowerCase() === "pending"
                       ? "bg-yellow-500"
-                      : order.orderStatus === "processing"
+                      : order.orderStatus.toLowerCase() === "processing"
                       ? "bg-blue-500"
-                      : order.orderStatus === "shipped"
+                      : order.orderStatus.toLowerCase() === "paid"
+                      ? "bg-lime-500"
+                      : order.orderStatus.toLowerCase() === "shipped"
                       ? "bg-purple-500"
-                      : order.orderStatus === "delivered"
+                      : order.orderStatus.toLowerCase() === "delivered"
                       ? "bg-green-500"
-                      : order.orderStatus === "cancelled"
+                      : order.orderStatus.toLowerCase() === "cancelled"
                       ? "bg-red-500"
-                      : order.orderStatus === "returned"
+                      : order.orderStatus.toLowerCase() === "returned"
                       ? "bg-gray-500"
                       : "bg-gray-300"
                   }`}
@@ -120,21 +124,19 @@ export default function AllOrders() {
                   {order.orderStatus}
                 </span>
               </td>
-              {
-                loggedInUser?.role === "admin" && (
-                  <td>
-                <button
-                  onClick={() => {
-                    setSelectedOrder(order);
-                    document.getElementById("update-order-status-modal")?.showModal();
-                  }}
-                  className="btn text-white hover:text-black btn-ghost btn-xs bg-purple-500"
-                >
-                  Update
-                </button>
-              </td>
-                )
-              }
+              {loggedInUser?.role === "admin" && (
+                <td>
+                  <button
+                    onClick={() => {
+                      setSelectedOrder(order);
+                      document.getElementById("update-order-status-modal")?.showModal();
+                    }}
+                    className="btn text-white hover:text-black btn-ghost btn-xs bg-purple-500"
+                  >
+                    Update
+                  </button>
+                </td>
+              )}
             </tr>
           ))}
         </tbody>
