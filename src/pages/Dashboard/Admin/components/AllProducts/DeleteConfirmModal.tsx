@@ -1,5 +1,8 @@
+import { useDeleteProductMutation } from "../../../../../redux/features/products/productsApi";
 
-export default function DeleteConfirmModal({ productId, deleteProduct }: { productId: string | null; deleteProduct}) {
+export default function DeleteConfirmModal({ productId}: { productId: string | ""; }) {
+
+  const [deleteProduct] = useDeleteProductMutation();
 
   return (
     <dialog id="delete-confirm-modal" className="modal modal-bottom sm:modal-middle">

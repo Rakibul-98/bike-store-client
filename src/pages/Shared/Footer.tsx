@@ -50,12 +50,10 @@ export default function Footer() {
 
     },
   ];
-  
 
   return (
     <footer className="bg-base-200 text-base-content py-10">
       <div className="w-[95%] mx-auto md:flex justify-between">
-        {/* Logo (Full width in md, 40% in lg) */}
         <div className="w-full lg:w-2/5 mb-6 lg:mb-0">
           <div className="flex flex-col items-center md:items-start">
             <div>
@@ -70,10 +68,9 @@ export default function Footer() {
               Your ultimate destination for high-performance <br /> bikes and accessories.
             </p>
           </div>
-          {/* Social Icons */}
           <div className="flex gap-3 text-lg justify-center md:justify-start mt-3">
             {socialLinks.map((link,i) => (
-              <Link key={i} className={`border border-black p-[6px] rounded-full hover:rotate-[360deg] transition-all duration-300 hover:text-white ${link.className}`} key={link.url} to={link.url} target="_blank" rel="noopener noreferrer">
+              <Link key={i} className={`border border-black p-[6px] rounded-full hover:rotate-[360deg] transition-all duration-300 hover:text-white ${link.className}`} to={link.url} target="_blank" rel="noopener noreferrer">
                 {link.icon}
               </Link>
             ))}
@@ -81,7 +78,6 @@ export default function Footer() {
 
         </div>
 
-        {/* Footer Links (Full width in small screens, 3 equal columns in md, 60% width in lg) */}
         <div className="w-full lg:w-3/5 grid grid-cols-1 md:grid-cols-3 gap-6 text-center md:text-left">
           {footerLinks.map((section,i) => (
             <nav key={i}>

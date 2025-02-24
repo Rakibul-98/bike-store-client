@@ -1,9 +1,9 @@
 import { useParams } from 'react-router-dom';
 import { useGetAllProductsQuery, useGetProductByIdQuery } from '../../redux/features/products/productsApi';
 import DetailsCard from './DetailsCard';
-import { TProduct } from '../Products/Products';
 import ProductCard from '../Products/ProductCard';
 import { useEffect, useState } from 'react';
+import { ItemType } from '../../interfaces/interfaces';
 
 export default function ProductDetails() {
   const { productId } = useParams();
@@ -14,15 +14,15 @@ export default function ProductDetails() {
   useEffect(() => {
     const updateVisibleCount = () => {
       if (window.innerWidth < 768) {
-        setVisibleCount(4); // Small screens
+        setVisibleCount(4);
       } else if (window.innerWidth < 1024) {
-        setVisibleCount(3); // Medium screens
+        setVisibleCount(3);
       } else {
-        setVisibleCount(4); // Large screens
+        setVisibleCount(4);
       }
     };
 
-    updateVisibleCount(); // Initial call
+    updateVisibleCount();
     window.addEventListener('resize', updateVisibleCount);
     return () => window.removeEventListener('resize', updateVisibleCount);
   }, []);
@@ -31,8 +31,7 @@ export default function ProductDetails() {
 
   const allProductsData = allProducts?.data?.result;
 
-  // Function to get random suggested products
-  const getRandomSuggestedProducts = (products: TProduct[], currentProductId: string | undefined) => {
+  const getRandomSuggestedProducts = (products: ItemType[], currentProductId: string | undefined) => {
     if (!products) return [];
     const filteredProducts = products.filter((p) => p._id !== currentProductId);
     return filteredProducts.sort(() => 0.5 - Math.random()).slice(0, visibleCount);
@@ -42,16 +41,13 @@ export default function ProductDetails() {
 
   return (
     <div className="my-10">
-      {/* Skeleton Loader for DetailsCard */}
       {isProductLoading ? (
         <div className="animate-pulse">
           <div className="grid grid-cols-1 md:grid-cols-2">
-            {/* Image Skeleton */}
             <div className="w-[90%] mx-auto md:ms-0">
               <div className="h-[500px] w-full bg-gray-300 rounded-lg"></div>
             </div>
 
-            {/* Details Skeleton */}
             <div className="flex items-center">
               <div className="w-10/12 mx-auto mt-5 md:mt-0">
                 <div className="h-8 bg-gray-300 w-3/4 rounded mb-4"></div>
@@ -101,7 +97,6 @@ export default function ProductDetails() {
         <DetailsCard productData={product?.data} />
       )}
 
-      {/* Suggested Products Section */}
       <h2 className="font-mono font-semibold text-2xl mt-10 mb-3">Products You May Like</h2>
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         {isAllProductsLoading

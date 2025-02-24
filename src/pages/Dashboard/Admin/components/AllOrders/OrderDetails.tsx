@@ -1,11 +1,83 @@
 import toast from "react-hot-toast";
 import { useDeleteOrderMutation } from "../../../../../redux/features/orders/ordersApi";
+import { OrderType } from "../../../../../interfaces/interfaces";
 
-export default function OrderDetails({ order }) {
+// interface ProductType {
+//   _id: string;
+//   name: string;
+//   brand: string;
+//   price: number;
+//   category: string;
+//   description: string;
+//   features: string[];
+//   product_image: string;
+//   available_quantity: number;
+//   cart_quantity: number;
+//   inStock: boolean;
+//   isDeleted: boolean;
+//   updatedAt: string;
+// }
+
+// interface ItemType {
+//   product: ProductType;
+//   order_quantity: number;
+//   _id: string;
+// }
+
+// interface CustomerType {
+//   _id: string;
+//   name: string;
+//   email: string;
+//   role: string;
+//   isBlocked: boolean;
+//   createdAt: string;
+//   updatedAt: string;
+//   profile_image: string;
+//   user_name: string;
+// }
+
+// interface TransactionType {
+//   id: string;
+//   transactionStatus: string;
+// }
+
+// interface OrderType {
+//   transaction: TransactionType;
+//   _id: string;
+//   customer: CustomerType;
+//   items: ItemType[];
+//   totalAmount: number;
+//   address: string;
+//   phone: string;
+//   orderStatus: string;
+//   isDeleted: boolean;
+//   createdAt: string;
+//   updatedAt: string;
+//   __v: number;
+// }
+
+interface StatusColors {
+  pending: string;
+  paid: string;
+  processing: string;
+  shipped: string;
+  delivered: string;
+  cancelled: string;
+  returned: string;
+}
+
+
+type OrderPropType = {
+  order: OrderType | null;
+}
+
+export default function OrderDetails({ order }: OrderPropType) {
+  
+  console.log(order)
 
   const [deleteOrder] = useDeleteOrderMutation();
 
-  const statusColors = {
+  const statusColors: StatusColors = {
     pending: "bg-yellow-500",
     paid: "bg-lime-500",
     processing: "bg-blue-500",
@@ -22,24 +94,28 @@ export default function OrderDetails({ order }) {
     { step: "delivered", deliveryTime: "Order already has been delivered" },
   ];
 
-  // Map the order status to the timeline steps
-  const getTimelineStep = (orderStatus) => {
-    const status = orderStatus?.toLowerCase(); // Convert to lowercase for better comparison
+  const getTimelineStep = (orderStatus: string) => {
+  const status = orderStatus?.toLowerCase(); 
+  
     if (status === "pending") return "pending";
     if (status === "paid" || status === "processing") return "processing";
     if (status === "shipped") return "shipped";
     if (status === "delivered") return "delivered";
-    return "delivered"; // For cancelled and returned, show up to delivered
+    return "delivered";
   };
 
-  const timelineStep = getTimelineStep(order?.orderStatus);
+  const timelineStep = getTimelineStep(order?.orderStatus || "pending");
+
+  const orderStatusKey = order?.orderStatus?.toLowerCase() as keyof StatusColors;
+
   const currentStepIndex = orderSteps.findIndex((step) => step.step === timelineStep);
 
   const estimatedDeliveryTime = orderSteps[currentStepIndex]?.deliveryTime || "Estimated delivery: Unknown";
 
-  const handleDelete = (orderId) => {
+  const handleDelete = (orderId:string) => {
     deleteOrder(orderId);
-    document.getElementById("order-details-modal")?.close();
+    const modal = document.getElementById('delete-confirm-modal') as HTMLDialogElement;
+            modal?.close();
     toast.success("Items deleted successfully");
   };
 
@@ -49,10 +125,10 @@ export default function OrderDetails({ order }) {
         <div className="flex justify-between items-center">
           <h2 className="text-xl font-bold">Order Details</h2>
           <p
-            className={`mt-2 px-3 py-1 rounded-full text-white text-sm font-semibold w-fit ${statusColors[order?.orderStatus.toLowerCase()]}`}
-          >
-            {order?.orderStatus.toUpperCase()}
-          </p>
+  className={`mt-2 px-3 py-1 rounded-full text-white text-sm font-semibold w-fit ${statusColors[orderStatusKey]}`}
+>
+  {order?.orderStatus.toUpperCase()}
+</p>
         </div>
 
         {/* Timeline Section */}
@@ -96,8 +172,7 @@ export default function OrderDetails({ order }) {
           {order?.customer?.email})
         </p>
         <p className="text-sm text-gray-600">
-          <span className="font-semibold">Date:</span>{" "}
-          {new Date(order?.createdAt).toLocaleString()}
+        <span className="font-semibold">Date:</span> {order?.createdAt ? new Date(order.createdAt).toLocaleString() : "N/A"}
         </p>
         <p className="text-sm text-gray-600">
           <span className="font-semibold">Estimate Delivery Time:</span> {estimatedDeliveryTime}
@@ -128,7 +203,10 @@ export default function OrderDetails({ order }) {
         }
           <button
             className="bg-gray-400 cursor-pointer hover:bg-red-500 px-3 py-1 rounded-sm text-white"
-            onClick={() => document.getElementById("order-details-modal")?.close()}
+            onClick={() => {
+              const modal = document.getElementById('order-details-modal') as HTMLDialogElement;
+            modal?.close();
+            }}
           >
             Close
           </button>

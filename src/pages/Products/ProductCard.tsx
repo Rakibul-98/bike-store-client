@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
-import { TProduct } from "./Products";
+import { ItemType } from "../../interfaces/interfaces";
 
-export default function ProductCard({ product }: { product: TProduct }) {
+export default function ProductCard({ product }: { product: ItemType }) {
   const { _id, brand, category, description, name, price, product_image } = product;
   const navigate = useNavigate();
 
@@ -14,7 +14,6 @@ export default function ProductCard({ product }: { product: TProduct }) {
       <div className="card bg-base-100 shadow-md group-hover:shadow-xl hover:ring-2 hover:ring-green-500 rounded-md overflow-hidden flex flex-col h-full">
         <div className="badge absolute top-2 right-2 badge-secondary">NEW</div>
         
-        {/* Image */}
         <figure className="w-full h-40">
           <img
             className="w-full h-full object-cover group-hover:scale-105 transition-all duration-500"
@@ -23,7 +22,6 @@ export default function ProductCard({ product }: { product: TProduct }) {
           />
         </figure>
 
-        {/* Card Body */}
         <div className="card-body bg-red-100 p-2 flex flex-col flex-grow">
           <h2 className="text-lg font-semibold flex justify-between">
             {name}

@@ -6,10 +6,11 @@ import { RiCloseLargeFill } from "react-icons/ri";
 import { NavLink } from "react-router-dom"; 
 import { useAppSelector } from "../../../redux/features/hooks";
 import { selectCurrentUser } from "../../../redux/features/auth/authSlice";
+import { StateType } from "../../../interfaces/interfaces";
 
-export default function SideBar({ isOpen, setIsOpen }) {
+const SideBar: React.FC<StateType> = ({ isOpen, setIsOpen }) => {
   const loggedInUser = useAppSelector(selectCurrentUser);
-  const userRole = loggedInUser?.role || "customer"; // Default role as "customer" if undefined
+  const userRole = loggedInUser?.role || "customer";
 
   useEffect(() => {
     const handleResize = () => {
@@ -109,3 +110,6 @@ export default function SideBar({ isOpen, setIsOpen }) {
     </div>
   );
 }
+
+
+export default SideBar;

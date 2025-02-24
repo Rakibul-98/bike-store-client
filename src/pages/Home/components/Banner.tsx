@@ -60,10 +60,9 @@ export default function Banner() {
 
   return (
     <div className="relative h-[300px] md:h-[400px] lg:h-[500px] overflow-hidden my-5"
-    onMouseEnter={() => setIsPaused(true)} // Pause on hover
+    onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)} 
     >
-      {/* Image Slides */}
       <div className="w-full h-full relative">
         {images.map((image, index) => (
           <div
@@ -77,7 +76,6 @@ export default function Banner() {
               alt={image.title}
               className="w-full h-full object-cover"
             />
-            {/* Overlay with Description */}
             <div className="absolute inset-0 bg-gradient-to-r from-black/70 to-transparent flex items-center">
               <div className="p-8 md:p-16 text-white max-w-xl mx-10">
                 <h2 className="text-3xl md:text-5xl font-bold relative">
@@ -94,7 +92,6 @@ export default function Banner() {
         ))}
       </div>
 
-      {/* Navigation Buttons */}
       <button
         className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-white/70 hover:bg-white p-2 rounded-full transition-all"
         onClick={prevSlide}

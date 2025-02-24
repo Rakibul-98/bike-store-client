@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { FieldValues, useFieldArray, useForm } from "react-hook-form";
 import { useCreateProductMutation, useGetProductByIdQuery, useUpdateProductMutation } from "../../../../../redux/features/products/productsApi";
 import toast from "react-hot-toast";
+import { APIErrorType } from "../../../../../interfaces/interfaces";
 
 export default function ProductForm({ action, productId }: { action: string; productId: string | null }) {
   const {
@@ -26,7 +27,7 @@ export default function ProductForm({ action, productId }: { action: string; pro
   const [createProduct] = useCreateProductMutation();
   const [updateProduct] = useUpdateProductMutation();
 
-  const { data: productData, isLoading } = useGetProductByIdQuery(productId, {
+  const { data: productData, isLoading } = useGetProductByIdQuery(productId || "", {
     skip: !productId,
   });
   useEffect(() => {
@@ -55,14 +56,17 @@ export default function ProductForm({ action, productId }: { action: string; pro
         price: Number(data.price)
       }
       try {
-        const res = await createProduct(updatedData).unwrap();
+        await createProduct(updatedData).unwrap();
         toast.success("New product added successfully");
         reset();
         setImagePreview(false);
-      } catch (error) {
-        toast.error(error?.data?.message || "Something went wrong.");
+      } catch (error: unknown) {
+        const errorMessage =
+        (error as APIErrorType)?.data?.message || "Failed to place order.";
+      toast.error(errorMessage);
       }
-      document.getElementById("add-product-modal")?.close();
+      const modal = document.getElementById('add-product-modal') as HTMLDialogElement;
+            modal?.close();
     }
     if (action === "update") {
       const updatedData = {
@@ -72,14 +76,17 @@ export default function ProductForm({ action, productId }: { action: string; pro
         price: Number(data.price)
       }
       try {
-        const res = await updateProduct(updatedData).unwrap();
+        await updateProduct(updatedData).unwrap();
         toast.success("Product updated successfully");
         reset();
         setImagePreview(false);
-      } catch (error) {
-        toast.error(error?.data?.message || "Something went wrong.");
+      } catch (error: unknown) {
+        const errorMessage =
+        (error as APIErrorType)?.data?.message || "Failed to place order.";
+      toast.error(errorMessage);
       }
-      document.getElementById("update-product-modal")?.close();
+      const modal = document.getElementById('update-product-modal') as HTMLDialogElement;
+            modal?.close();
     }
   };
 
@@ -116,8 +123,7 @@ export default function ProductForm({ action, productId }: { action: string; pro
               {...register("product_image", { required: true })}
               className={`${errors.product_image && "border-red-500 focus:outline-red-500"} border p-1 w-full`}
               placeholder="Image URL"
-              onChange={(e) => {
-                // setValue("product_image", e.target.value);
+              onChange={() => {
                 setImagePreview(true);
               }}
             />

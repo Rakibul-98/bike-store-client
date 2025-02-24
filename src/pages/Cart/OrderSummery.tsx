@@ -12,14 +12,14 @@ type CouponType = {
 }
 
 export default function OrderSummery() {
-  const { register, handleSubmit } = useForm<CouponType>();  const { totalAmount, totalItems, shippingCost, tax, discount, grandTotal, appliedCoupon } = useSelector((state: RootState) => state.cart);
+  const { register, handleSubmit } = useForm<CouponType>();
+  const { totalAmount, totalItems, shippingCost, tax, discount, grandTotal, appliedCoupon } = useSelector((state: RootState) => state.cart);
   const [enteredCoupon, setEnteredCoupon] = useState<string | null>(null);
 
   
   const dispatch = useDispatch();
 
   const onSubmit: SubmitHandler<CouponType> = (data) => {
-    console.log(data)
     setEnteredCoupon(data.coupon);
     dispatch(applyCoupon(data.coupon));
     if (data.coupon !== appliedCoupon) {

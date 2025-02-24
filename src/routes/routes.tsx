@@ -34,7 +34,6 @@ const router = createBrowserRouter([
       { path: "register", element: <Register /> },
 
 
-      // ✅ Protected Routes
       { path: "cart", element: <ProtectedRoute><Cart /></ProtectedRoute> },
       { path: "checkout", element: <ProtectedRoute><CheckOut /></ProtectedRoute> },
       { path: "profile", element: <ProtectedRoute><UserProfile /></ProtectedRoute> },

@@ -5,24 +5,40 @@ import { clearCart } from "../../redux/features/cart/CartSlice";
 import { useCreateOrderMutation } from "../../redux/features/orders/ordersApi";
 import { useForm } from "react-hook-form";
 import { CheckOutSkeleton } from "./CheckOutSkeleton";
+import { RootState } from "../../redux/features/store";
+import { APIErrorType } from "../../interfaces/interfaces";
+
+type cartItemType = {
+  _id: string;
+  cart_quantity: number;
+    name: string;
+    price: number;
+}
+
+type OrderFormDataType = {
+  address: string;
+  phone: string;
+  name: string;
+  email: string;
+};
 
 export default function CheckOut() {
-  const cartItems = useSelector((state: any) => state.cart.items);
-  const { totalAmount, shippingCost, tax, discount, grandTotal } = useSelector( (state) => state?.cart );
+  const cartItems = useSelector((state: RootState) => state.cart.items);
+  const { totalAmount, shippingCost, tax, discount, grandTotal } = useSelector( (state: RootState) => state?.cart );
 
   const dispatch = useDispatch();
 
   const [createOrder] = useCreateOrderMutation();
 
-  const loggedInUser = useSelector((state: any) => state.auth.user);
-  const { data: user, error, isLoading } = useGetUserByEmailQuery(loggedInUser?.user);
+  const loggedInUser = useSelector((state: RootState) => state.auth.user );
+  const { data: user, error, isLoading } = useGetUserByEmailQuery(loggedInUser?.user ?? "");
 
-  const { register, handleSubmit, formState: {  errors } } = useForm();
+  const { register, handleSubmit, formState: {  errors } } = useForm<OrderFormDataType>();
 
   if (isLoading) return <CheckOutSkeleton/>;
   if (error) return toast.error("Error loading user data");
 
-  const onSubmit = async (data) => {
+  const onSubmit = async (data: OrderFormDataType) => {
     if (!data.address || !data.phone) {
       toast.error("Please fill in all details!");
       return;
@@ -39,13 +55,13 @@ export default function CheckOut() {
       totalAmount: grandTotal,
     };
 
+    console.log(orderData.items)
+
     try {
       const res = await createOrder(orderData).unwrap();
-      console.log(res)
       const url = res.data;
       if (!res?.error) {
         toast.success("Order placed successfully!");
-        console.log(res)
         setTimeout(() => {
           window.location.href = url;
         }, 1000)
@@ -53,8 +69,10 @@ export default function CheckOut() {
       } else {
         toast.error("Something went wrong!");
       }
-    } catch (err: any) {
-      toast.error(err?.data?.message || "Failed to place order.");
+    } catch (err: unknown) {
+      const errorMessage =
+        (err as APIErrorType)?.data?.message || "Failed to place order.";
+      toast.error(errorMessage);
     }
   };
 
@@ -91,7 +109,7 @@ export default function CheckOut() {
 
         <div className="mt-5 border-t pt-3">
           <h3 className="text-xl font-semibold">Order Summary</h3>
-          {cartItems.map((item: any) => (
+          {cartItems.map((item: cartItemType) => (
             <div key={item._id} className="flex justify-between border-b py-2">
               <p>{item.name} (x{item.cart_quantity})</p>
               <p>${(item.price * item.cart_quantity).toFixed(2)}</p>

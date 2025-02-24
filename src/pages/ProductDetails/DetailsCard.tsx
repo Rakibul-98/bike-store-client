@@ -1,32 +1,30 @@
 import { useDispatch, useSelector } from "react-redux";
 import { addToCart } from "../../redux/features/cart/CartSlice";
-import { TProduct } from "../Products/Products";
 import { useEffect, useState, useMemo } from "react";
 import { BsCartPlus, BsCheck, BsExclamationTriangle } from "react-icons/bs";
 import toast from "react-hot-toast";
 import { createSelector } from "@reduxjs/toolkit";
 import { Link } from "react-router-dom";
 import { useGetUserByEmailQuery } from "../../redux/features/users/usersApi";
+import { RootState } from "../../redux/features/store";
+import { ItemType } from "../../interfaces/interfaces";
 
-// Memoized selector for cart items
-const selectCartItems = (state: any) => state.cart.items;
+const selectCartItems = (state:RootState ) => state.cart.items;
 const memoizedCartItems = createSelector(
   [selectCartItems],
   (items) => (Array.isArray(items) ? items : [])
 );
 
-export default function DetailsCard({ productData }: { productData: TProduct }) {
+export default function DetailsCard({ productData }: { productData: ItemType }) {
   const dispatch = useDispatch();
   const [added, setAdded] = useState(false);
   const [isLimitExceed, setIsLimitExceed] = useState(false);
 
-  // Fetch logged-in user data
-  const loggedInUser = useSelector((state: any) => state?.auth?.user);
+  const loggedInUser = useSelector((state:RootState) => state?.auth?.user);
   const { data: user, error: userError, isLoading: isUserLoading } = useGetUserByEmailQuery(
-    loggedInUser?.user
+    loggedInUser?.user || ""
   );
 
-  // Extract product details
   const {
     available_quantity,
     brand,
@@ -40,24 +38,20 @@ export default function DetailsCard({ productData }: { productData: TProduct }) 
     _id,
   } = productData;
 
-  // Get cart items
   const cartItems = useSelector(memoizedCartItems);
   const cartItem = cartItems.find((item) => item._id === _id);
   const cartQuantity = cartItem?.cart_quantity || 0;
 
-  // Calculate fake price and discount percentage
   const fakePrice = useMemo(() => price * 1.3, [price]);
   const discountPercentage = useMemo(
     () => Math.ceil(100 - (price / fakePrice) * 100),
     [price, fakePrice]
   );
 
-  // Check if the quantity limit is exceeded
   useEffect(() => {
     setIsLimitExceed(cartQuantity + 1 > available_quantity);
   }, [cartQuantity, available_quantity]);
 
-  // Handle adding to cart
   const handleAddToCart = () => {
     if (!isLimitExceed) {
       dispatch(addToCart(productData));
@@ -69,19 +63,16 @@ export default function DetailsCard({ productData }: { productData: TProduct }) 
     }
   };
 
-  // Loading and error handling for user data
-  if (isUserLoading) return <p>Loading user...</p>;
-  if (userError) return <p>Failed to load user.</p>;
+  if (isUserLoading) return toast.loading("loading user");
+  if (userError) return toast.error("Error loading user");
 
   return (
     <div className="">
       <div className="grid grid-cols-1 md:grid-cols-2 bg-no-repeat bg-cover">
-        {/* Product Image */}
         <div className="w-[90%] mx-auto md:ms-0">
           <img className="h-[500px] w-full" src={product_image} alt={name} />
         </div>
 
-        {/* Product Details */}
         <div className="flex items-center">
           <div className="w-10/12 mx-auto mt-5 md:mt-0">
             <h2 className="text-3xl font-semibold font-mono">{name}</h2>
@@ -132,7 +123,6 @@ export default function DetailsCard({ productData }: { productData: TProduct }) 
               ))}
             </ul>
 
-            {/* Add to Cart or Login Prompt */}
             <div className="flex justify-end mt-5">
               {loggedInUser?.role === "customer" && !user?.data?.isBlocked ? (
                 <button

@@ -17,11 +17,11 @@ export default function Navbar() {
   const loggedInUser = useAppSelector(selectCurrentUser);
   const cartItems = useSelector((state: RootState) => state.cart.items);
 
-  const { data: user, error, isLoading } = useGetUserByEmailQuery(loggedInUser?.user, {
+  const { data: user, error, isLoading } = useGetUserByEmailQuery(loggedInUser?.user || "", {
     skip: !loggedInUser?.user,
   });
 
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false); // State for mobile menu
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const handleLogout = () => {
     dispatch(logout());
@@ -34,13 +34,11 @@ export default function Navbar() {
 
   return (
     <div className="flex justify-between items-center h-12 px-4 bg-white shadow-md">
-      {/* Logo */}
       <NavLink className="flex items-baseline text-purple-500" to="/">
         <RiMotorbikeLine className="text-3xl md:-rotate-[25deg]" />
         <span className="hidden md:block text-lg font-medium">Bike Solution</span>
       </NavLink>
 
-      {/* Hamburger Menu (Mobile) */}
       <button
         className="sm:hidden text-purple-500"
         onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -48,7 +46,6 @@ export default function Navbar() {
         {isMobileMenuOpen ? <HiX className="text-2xl" /> : <HiMenu className="text-2xl" />}
       </button>
 
-      {/* Nav Links (Desktop) */}
       <nav className="hidden sm:flex">
         <ul className="nav flex gap-5">
           <li>
@@ -84,7 +81,6 @@ export default function Navbar() {
         </ul>
       </nav>
 
-      {/* Cart and Profile (Desktop) */}
       <div className="hidden sm:flex items-center gap-3 text-xl">
         <div className="indicator">
           <NavLink
@@ -105,7 +101,7 @@ export default function Navbar() {
         ) : error ? (
           <p className="text-red-500 text-sm">Failed to load</p>
         ) : user ? (
-          <ProfileDropdown user={user} handleLogout={handleLogout} />
+          <ProfileDropdown user={user.data} handleLogout={handleLogout} />
         ) : (
           <NavLink
             to="/login"
@@ -120,7 +116,6 @@ export default function Navbar() {
         )}
       </div>
 
-      {/* Mobile Menu (Small Screens) */}
       {isMobileMenuOpen && (
         <div className="sm:hidden absolute top-12 left-0 right-0 bg-white shadow-lg z-50 text-end">
           <ul className="flex flex-col p-4">
@@ -176,7 +171,7 @@ export default function Navbar() {
               <li className="text-red-500 text-sm">Failed to load</li>
             ) : user ? (
               <li>
-                <ProfileDropdown user={user} handleLogout={handleLogout} />
+                <ProfileDropdown user={user.data} handleLogout={handleLogout} />
               </li>
             ) : (
               <li>

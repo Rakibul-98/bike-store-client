@@ -2,24 +2,10 @@ import { useMemo, useState } from "react";
 import { useGetAllProductsQuery } from "../../redux/features/products/productsApi";
 import FilterDropdown from "../Dashboard/Admin/components/AllProducts/FilterDropdown";
 import ProductCard from "./ProductCard";
-import { useForm } from "react-hook-form";
+import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import { BiArrowToBottom, BiArrowToTop } from "react-icons/bi";
 import noProductImg from '../../assets/images/no-product.svg';
-
-export type TProduct = {
-  _id: string;
-  name: string;
-  brand: string;
-  price: number;
-  category: "Mountain" | "Road" | "Hybrid" | "Electric";
-  description: string;
-  features: string[];
-  product_image: string;
-  available_quantity: number;
-  cart_quantity: number;
-  inStock: boolean;
-  isDeleted: boolean;
-};
+import { ItemType } from "../../interfaces/interfaces";
 
 export default function Products() {
   const [brands, setBrands] = useState<string[]>([]);
@@ -80,14 +66,17 @@ export default function Products() {
 
   useMemo(() => {
     if (data?.data?.result) {
-      const uniqueBrands = Array.from(new Set(data.data.result.map((product) => product.brand)));
+      const uniqueBrands = Array.from(
+        new Set(data.data.result.map((product: ItemType) => product.brand))
+      ) as string[];
       setBrands(uniqueBrands);
     }
   }, [data]);
 
-  const onSubmit = (data: string) => {
-    setSearch(data);
-  };
+  const onSubmit: SubmitHandler<FieldValues> = (data) => {
+      const search = data.search;
+      setSearch(search);
+    };
 
   const handleSort = (field: "price") => {
     setSort((prevSort) => {
@@ -159,7 +148,7 @@ export default function Products() {
         <p className="text-center col-span-full">Failed to load products.</p>
       ) : Array.isArray(data?.data?.result) && data?.data?.result.length > 0 ? (
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          {data?.data?.result.map((product: TProduct) => (
+          {data?.data?.result.map((product: ItemType) => (
             <ProductCard key={product?._id} product={product} />
           ))}
         </div>

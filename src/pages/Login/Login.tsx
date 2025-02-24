@@ -1,4 +1,4 @@
-import { useForm } from "react-hook-form";
+import { SubmitHandler, useForm } from "react-hook-form";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useLoginMutation } from "../../redux/features/auth/authApi";
 import { useAppDispatch } from "../../redux/features/hooks";
@@ -6,21 +6,27 @@ import { setUser } from "../../redux/features/auth/authSlice";
 import { verifyToken } from "../../util/verifyToken";
 import loginImg from "../../assets/images/login.svg";
 import toast from "react-hot-toast";
+import { APIErrorType } from "../../interfaces/interfaces";
+
+type formDataType = {
+  email: string;
+  password: string;
+}
 
 export default function Login() {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const location = useLocation();
   
-  const { register, handleSubmit, formState: { errors } } = useForm({
+  const { register, handleSubmit, formState: { errors } } = useForm<formDataType>({
     defaultValues: {
-      email: "sadiya@example.com",
+      email: "user@example.com",
       password: "12345"
     }
   });
   const [login] = useLoginMutation();
 
-  const onSubmit = async (data: any) => {
+  const onSubmit: SubmitHandler<formDataType> = async (data) => {
     try {
       const res = await login(data).unwrap();
       const user = verifyToken(res.data.token);
@@ -28,20 +34,18 @@ export default function Login() {
   
       toast.success("Login successful!");
   
-      // Determine the correct dashboard path based on the user's role
-      const dashboardPath = `/${user.role.toLowerCase()}Dashboard`;
+      const dashboardPath = `/${user?.role?.toLowerCase()}Dashboard`;
   
-      // Check if the `from` path is a dashboard path
       const from = location.state?.from?.pathname;
       if (from && from.includes("Dashboard")) {
-        // If the `from` path is a dashboard, force redirect to the correct dashboard
         navigate(dashboardPath, { replace: true });
       } else {
-        // Otherwise, proceed with the `from` path or fallback to the correct dashboard
         navigate(from || dashboardPath, { replace: true });
       }
-    } catch (error) {
-      toast.error("Login failed! Invalid credentials!!");
+    }catch (error: unknown) {
+        const errorMessage =
+        (error as APIErrorType)?.data?.message || "Login failed! Invalid credentials!!";
+      toast.error(errorMessage);
     }
   };
 
@@ -53,7 +57,6 @@ export default function Login() {
           <img src={loginImg} alt="Login" className="w-80" />
         </div>
 
-        {/* Right Section - Form */}
         <div className="md:w-1/2 w-full p-8">
           <h2 className="text-2xl font-bold text-gray-700 text-center mb-6">
             Welcome Back! 👋

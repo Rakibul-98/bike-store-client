@@ -1,3 +1,4 @@
+import { argsType } from "../../../interfaces/interfaces";
 import { baseApi } from "../../api/baseApi";
 
 const ordersApi = baseApi.injectEndpoints({
@@ -6,7 +7,7 @@ const ordersApi = baseApi.injectEndpoints({
       query: (args) => {
         const params = new URLSearchParams();
         if (args) {
-          args.forEach((item) => {
+          args.forEach((item: argsType) => {
             params.append(item.name, item.value);
           });
         }

@@ -7,6 +7,7 @@ import { useGetUserByEmailQuery, useUpdateUserMutation } from "../../redux/featu
 import toast from "react-hot-toast";
 import ChangePassword from "./ChangePassword";
 import { UserProfileSkeleton } from "./UserProfileSkeleton";
+import { APIErrorType } from "../../interfaces/interfaces";
 
 interface FormData {
   user_name: string;
@@ -16,7 +17,7 @@ interface FormData {
 export default function UserProfile() {
   const loggedInUser = useAppSelector(selectCurrentUser);
 
-  const { data: user, error, isLoading } = useGetUserByEmailQuery(loggedInUser?.user, {
+  const { data: user, error, isLoading } = useGetUserByEmailQuery(loggedInUser?.user || "", {
     skip: !loggedInUser?.user,
   });
 
@@ -53,8 +54,10 @@ export default function UserProfile() {
       } else {
         toast.error("Something went wrong. Please try again.");
       }
-    } catch (err: any) {
-      toast.error(err?.data?.message || "Something went wrong!");
+    } catch (error: unknown) {
+        const errorMessage =
+        (error as APIErrorType)?.data?.message || "Something went wrong!!";
+      toast.error(errorMessage);
     }
   };
 

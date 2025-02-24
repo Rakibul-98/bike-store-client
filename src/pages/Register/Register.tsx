@@ -3,22 +3,17 @@ import { Link, useNavigate } from "react-router-dom";
 import { useRegistrationMutation } from "../../redux/features/auth/authApi";
 import registerImage from "../../assets/images/register.svg";
 import toast from "react-hot-toast";
+import { APIErrorType } from "../../interfaces/interfaces";
 
 export default function Register() {
   const navigate = useNavigate();
-  const { register, handleSubmit, reset, formState: { errors } } = useForm({
-    defaultValues: {
-      user_name: "User 1",
-      email: "user1@example.com",
-      password: "12345"
-    }
-  });
+  const { register, handleSubmit, reset, formState: { errors } } = useForm();
 
   const [registration] = useRegistrationMutation();
 
   const onSubmit = async (data: FieldValues) => {
     try {
-      const res = await registration(data).unwrap(); // Unwrap the response
+      const res = await registration(data).unwrap();
 
       if (res?.success || res?.user) { 
         toast.success("Registration successful!");
@@ -27,16 +22,17 @@ export default function Register() {
       } else {
         toast.error("Something went wrong. Please try again.");
       }
-    } catch (err: any) {
-      toast.error(err?.data?.message || "Registration failed!");
-    }
+    } catch (error: unknown) {
+      const errorMessage =
+      (error as APIErrorType)?.data?.message || "Something went wrong!!Try again later";
+    toast.error(errorMessage);
+  }
   };
 
   return (
     <div className="my-10 min-h-[80vh] flex items-center justify-center px-4">
       <div className="bg-white shadow-lg rounded-lg overflow-hidden flex flex-col md:flex-row max-w-4xl w-full border">
         
-        {/* Left Section - Form */}
         <div className="md:w-1/2 w-full p-8">
           <h2 className="text-2xl font-bold text-gray-700 text-center mb-6">
             Create an Account
@@ -87,7 +83,6 @@ export default function Register() {
           </p>
         </div>
 
-        {/* Right Section - Image */}
         <div className="md:w-1/2 hidden md:flex items-center justify-center bg-gray-50 p-8">
           <img src={registerImage} alt="Register" className="w-80" />
         </div>

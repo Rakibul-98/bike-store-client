@@ -5,6 +5,7 @@ import { FiLock, FiSave } from "react-icons/fi";
 import { useChangePasswordMutation } from "../../redux/features/auth/authApi";
 import { logout } from "../../redux/features/auth/authSlice";
 import { useAppDispatch } from "../../redux/features/hooks";
+import { APIErrorType } from "../../interfaces/interfaces";
 
 interface ChangePasswordData {
     oldPassword: string;
@@ -41,10 +42,11 @@ export default function ChangePassword() {
                 dispatch(logout());
               }
           
-        } catch (err: any) {
-            console.log(err)
-          toast.error(err?.data?.message || "Failed to change password.");
-        }
+        } catch (error: unknown) {
+          const errorMessage =
+          (error as APIErrorType)?.data?.message || "Failed to authenticate!";
+        toast.error(errorMessage);
+      }
     };
   return (
     <div className="mt-6">

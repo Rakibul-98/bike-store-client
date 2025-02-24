@@ -6,12 +6,15 @@ import { FaRegEye } from "react-icons/fa6";
 import { selectCurrentUser } from "../../../../../redux/features/auth/authSlice";
 import { useAppSelector } from "../../../../../redux/features/hooks";
 import { TableSkeleton } from "../../../shared/TableSkeleton";
+import toast from "react-hot-toast";
+import { OrderType } from "../../../../../interfaces/interfaces";
 
 export default function AllOrders() {
   const [filterStatus, setFilterStatus] = useState("All Orders");
   const [filteredOrders, setFilteredOrders] = useState([]);
-  const [selectedOrder, setSelectedOrder] = useState(null);
-  const [detailOrder, setDetailOrder] = useState(null);
+  const [selectedOrder, setSelectedOrder] = useState<OrderType | null>(null);
+  const [detailOrder, setDetailOrder] = useState<OrderType | null>(null);
+
   const { data: orders, error, isLoading } = useGetAllOrdersQuery(undefined);
 
   const loggedInUser = useAppSelector(selectCurrentUser);
@@ -22,13 +25,14 @@ export default function AllOrders() {
     }
   }, [orders]);
 
-  const handleFilter = (status) => {
+  const handleFilter = (status:string) => {
+    console.log(status);
     setFilterStatus(status);
     if (status === "All Orders") {
       setFilteredOrders(orders?.data || []);
     } else {
       setFilteredOrders(
-        orders?.data.filter((order) => order.orderStatus.toLowerCase() === status.toLowerCase()) || []
+        orders?.data.filter((order: { orderStatus: string }) => order.orderStatus.toLowerCase() === status.toLowerCase()) || []
       );
     }
   };
@@ -46,7 +50,7 @@ export default function AllOrders() {
   const categoryOptions = ["All Orders", ...statusOptions];
 
   if (isLoading) return <TableSkeleton />;
-  if (error) return <p>Failed to load orders.</p>;
+  if (error) return toast.error("Failed to load orders");
 
   return (
     <div>
@@ -68,7 +72,6 @@ export default function AllOrders() {
         ))}
       </div>
 
-      {/* Orders Table */}
       <table className="table mb-5">
         <thead>
           <tr>
@@ -82,7 +85,7 @@ export default function AllOrders() {
           </tr>
         </thead>
         <tbody>
-          {filteredOrders.map((order) => (
+          {filteredOrders.map((order:OrderType) => (
             <tr key={order._id}>
               <td>
                 <div className="flex gap-3 items-center">
@@ -91,7 +94,8 @@ export default function AllOrders() {
                     className="text-lg hover:text-green-500 cursor-pointer"
                     onClick={() => {
                       setDetailOrder(order);
-                      document.getElementById("order-details-modal")?.showModal();
+                      const modal = document.getElementById('order-details-modal') as HTMLDialogElement;
+                      modal?.showModal();
                     }}
                   >
                     <FaRegEye />
@@ -129,7 +133,8 @@ export default function AllOrders() {
                   <button
                     onClick={() => {
                       setSelectedOrder(order);
-                      document.getElementById("update-order-status-modal")?.showModal();
+                      const modal = document.getElementById('update-order-status-modal') as HTMLDialogElement;
+            modal?.showModal();
                     }}
                     className="btn text-white hover:text-black btn-ghost btn-xs bg-purple-500"
                   >

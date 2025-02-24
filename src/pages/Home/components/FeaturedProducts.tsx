@@ -8,32 +8,28 @@ export default function FeaturedProducts() {
   const { data, isLoading, error } = useGetAllProductsQuery(undefined);
   const [visibleCount, setVisibleCount] = useState(4);
 
-  // Adjust the number of items based on screen width
   useEffect(() => {
     const updateVisibleCount = () => {
       if (window.innerWidth < 768) {
-        setVisibleCount(2); // Small screens
+        setVisibleCount(2);
       } else if (window.innerWidth < 1024) {
-        setVisibleCount(3); // Medium screens
+        setVisibleCount(3); 
       } else {
-        setVisibleCount(4); // Large screens
+        setVisibleCount(4); 
       }
     };
 
-    updateVisibleCount(); // Initial call
+    updateVisibleCount();
     window.addEventListener("resize", updateVisibleCount);
     return () => window.removeEventListener("resize", updateVisibleCount);
   }, []);
 
   if (error) return <p>Failed to load products.</p>;
 
-  // Ensure products exist
   const products: TProduct[] = data?.data?.result || [];
 
-  // Get required number of products based on screen size
   const selectedProducts = products.slice(0, visibleCount);
 
-  // Fill remaining slots with skeletons
   const skeletonCount = visibleCount - selectedProducts.length;
 
   return (
@@ -44,12 +40,10 @@ export default function FeaturedProducts() {
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-        {/* Render available products */}
         {selectedProducts.map((product) => (
           <ProductCard key={product._id} product={product} />
         ))}
 
-        {/* Render skeletons if less than required */}
         {(isLoading || skeletonCount > 0) &&
           Array.from({ length: isLoading ? visibleCount : skeletonCount }).map((_, index) => (
             <div
