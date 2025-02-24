@@ -32,7 +32,7 @@ export default function Reports() {
   ];
 
   return (
-    <div className="mb-5">
+    <div className="mb-5 md:px-3">
       <h1 className="text-2xl font-bold mb-4">Reports</h1>
       <p className="text-gray-600 mb-6">View and analyze sales, inventory, and other data.</p>
 

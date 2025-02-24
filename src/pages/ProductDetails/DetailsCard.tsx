@@ -63,7 +63,7 @@ export default function DetailsCard({ productData }: { productData: ItemType }) 
     }
   };
 
-  if (isUserLoading) return toast.loading("loading user");
+  if (isUserLoading) return <p>loading user</p>;
   if (userError) return toast.error("Error loading user");
 
   return (
