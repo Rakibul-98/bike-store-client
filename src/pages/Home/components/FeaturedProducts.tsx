@@ -1,8 +1,8 @@
 import { useGetAllProductsQuery } from "../../../redux/features/products/productsApi";
-import { TProduct } from "../../Products/Products";
 import { useState, useEffect } from "react";
 import ProductCard from "../../Products/ProductCard";
 import { Link } from "react-router-dom";
+import { ItemType } from "../../../interfaces/interfaces";
 
 export default function FeaturedProducts() {
   const { data, isLoading, error } = useGetAllProductsQuery(undefined);
@@ -26,7 +26,7 @@ export default function FeaturedProducts() {
 
   if (error) return <p>Failed to load products.</p>;
 
-  const products: TProduct[] = data?.data?.result || [];
+  const products: ItemType[] = data?.data?.result || [];
 
   const selectedProducts = products.slice(0, visibleCount);
 
